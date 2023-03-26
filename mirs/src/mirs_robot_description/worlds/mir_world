@@ -1,0 +1,604 @@
+<sdf version='1.7'>
+  <world name='default'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <audio>
+      <device>default</device>
+    </audio>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <model name='mirs_robot'>
+      <joint name='base_joint' type='fixed'>
+        <pose relative_to='__model__'>0 0 0 0 -0 0</pose>
+        <parent>world</parent>
+        <child>base_link</child>
+      </joint>
+      <link name='base_link'>
+        <pose relative_to='base_joint'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0.000113 1e-06 0.056113 0 -0 0</pose>
+          <mass>0.760795</mass>
+          <inertia>
+            <ixx>0.00209</ixx>
+            <ixy>0</ixy>
+            <ixz>3e-06</ixz>
+            <iyy>0.002086</iyy>
+            <iyz>0</iyz>
+            <izz>0.001141</izz>
+          </inertia>
+        </inertial>
+        <collision name='base_link_collision'>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/base_link.stl</uri>
+            </mesh>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>0.2</mu>
+                <mu2>0.2</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='base_link_visual'>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/base_link.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Silver</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>1</self_collide>
+        <gravity>1</gravity>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='joint_1' type='revolute'>
+        <pose relative_to='base_link'>0 0 0.081 0 -0 0</pose>
+        <parent>base_link</parent>
+        <child>Link_1_1</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='Link_1_1'>
+        <pose relative_to='joint_1'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>-2.2e-05 -0.008667 0.111224 0 -0 0</pose>
+          <mass>0.363624</mass>
+          <inertia>
+            <ixx>0.000817</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000637</iyy>
+            <iyz>8.7e-05</iyz>
+            <izz>0.000388</izz>
+          </inertia>
+        </inertial>
+        <collision name='Link_1_1_collision'>
+          <pose>0 0 -0.081 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_1_1.stl</uri>
+            </mesh>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>0.2</mu>
+                <mu2>0.2</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='Link_1_1_visual'>
+          <pose>0 0 -0.081 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_1_1.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Silver</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>1</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='joint_2' type='revolute'>
+        <pose relative_to='Link_1_1'>0 -0.032 0.139 0 -0 0</pose>
+        <parent>Link_1_1</parent>
+        <child>Link_2_1</child>
+        <axis>
+          <xyz>0 -1 0</xyz>
+          <limit>
+            <lower>-0.785398</lower>
+            <upper>2.35619</upper>
+            <effort>100</effort>
+            <velocity>100</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='Link_2_1'>
+        <pose relative_to='joint_2'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0.102825 -0.0492 3.6e-05 0 -0 0</pose>
+          <mass>0.302156</mass>
+          <inertia>
+            <ixx>0.000237</ixx>
+            <ixy>1.7e-05</ixy>
+            <ixz>1e-06</ixz>
+            <iyy>0.002441</iyy>
+            <iyz>0</iyz>
+            <izz>0.002532</izz>
+          </inertia>
+        </inertial>
+        <collision name='Link_2_1_collision'>
+          <pose>0 0.032 -0.22 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_2_1.stl</uri>
+            </mesh>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>0.2</mu>
+                <mu2>0.2</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='Link_2_1_visual'>
+          <pose>0 0.032 -0.22 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_2_1.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Silver</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>1</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='joint_3' type='revolute'>
+        <pose relative_to='Link_2_1'>0.2 -0.03562 0 0 -0 0</pose>
+        <parent>Link_2_1</parent>
+        <child>Link_3_1</child>
+        <axis>
+          <xyz>0 -1 0</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>100</effort>
+            <velocity>100</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='Link_3_1'>
+        <pose relative_to='joint_3'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0.025228 0.074409 -1e-06 0 -0 0</pose>
+          <mass>0.206954</mass>
+          <inertia>
+            <ixx>0.000152</ixx>
+            <ixy>-5.5e-05</ixy>
+            <ixz>0</ixz>
+            <iyy>0.000259</iyy>
+            <iyz>0</iyz>
+            <izz>0.000337</izz>
+          </inertia>
+        </inertial>
+        <collision name='Link_3_1_collision'>
+          <pose>-0.2 0.06762 -0.22 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_3_1.stl</uri>
+            </mesh>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>0.2</mu>
+                <mu2>0.2</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='Link_3_1_visual'>
+          <pose>-0.2 0.06762 -0.22 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_3_1.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Silver</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>1</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='joint_4' type='revolute'>
+        <pose relative_to='Link_3_1'>0.0309 0.08511 0 0 -0 0</pose>
+        <parent>Link_3_1</parent>
+        <child>Link_4_1</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>100</effort>
+            <velocity>100</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='Link_4_1'>
+        <pose relative_to='joint_4'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0.085413 0.000295 0.001674 0 -0 0</pose>
+          <mass>0.160081</mass>
+          <inertia>
+            <ixx>8.4e-05</ixx>
+            <ixy>0</ixy>
+            <ixz>-6e-06</ixz>
+            <iyy>0.000201</iyy>
+            <iyz>-1e-06</iyz>
+            <izz>0.000184</izz>
+          </inertia>
+        </inertial>
+        <collision name='Link_4_1_collision'>
+          <pose>-0.2309 -0.01749 -0.22 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_4_1.stl</uri>
+            </mesh>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>0.2</mu>
+                <mu2>0.2</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='Link_4_1_visual'>
+          <pose>-0.2309 -0.01749 -0.22 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_4_1.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Silver</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>1</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='joint_5' type='revolute'>
+        <pose relative_to='Link_4_1'>0.12535 0 0.0195 0 -0 0</pose>
+        <parent>Link_4_1</parent>
+        <child>Link_5_1</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.785398</lower>
+            <upper>0.785398</upper>
+            <effort>100</effort>
+            <velocity>100</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <link name='Link_5_1'>
+        <pose relative_to='joint_5'>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose>0.015538 -0.002258 -0.019312 0 -0 0</pose>
+          <mass>0.101918</mass>
+          <inertia>
+            <ixx>3.2e-05</ixx>
+            <ixy>4e-06</ixy>
+            <ixz>0</ixz>
+            <iyy>6.2e-05</iyy>
+            <iyz>0</iyz>
+            <izz>7.3e-05</izz>
+          </inertia>
+        </inertial>
+        <collision name='Link_5_1_collision'>
+          <pose>-0.35625 -0.01749 -0.2395 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_5_1.stl</uri>
+            </mesh>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>0.2</mu>
+                <mu2>0.2</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='Link_5_1_visual'>
+          <pose>-0.35625 -0.01749 -0.2395 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/home/chethan_putran/gasebo_tutues/install/robot_description/share/robot_description/meshes/Link_5_1.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Silver</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>1</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>0 0 0 0 -0 0</pose>
+    </model>
+    <state world_name='default'>
+      <sim_time>8 286000000</sim_time>
+      <real_time>113 497274929</real_time>
+      <wall_time>1679819531 875974378</wall_time>
+      <iterations>8286</iterations>
+      <model name='ground_plane'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='mirs_robot'>
+        <pose>-0 -0 0 0 1e-06 0</pose>
+        <scale>1 1 1</scale>
+        <link name='Link_1_1'>
+          <pose>-1e-06 -1e-06 0.081 0 0 -2.6422</pose>
+          <velocity>0.000152 4.3e-05 -5e-06 -2.6e-05 8.9e-05 0.264653</velocity>
+          <acceleration>0.339974 0.113689 -0.005202 -0.047279 -0.050462 -0.370295</acceleration>
+          <wrench>0.123623 0.04134 -0.001891 0 -0 0</wrench>
+        </link>
+        <link name='Link_2_1'>
+          <pose>-0.015326 0.028091 0.22 -3e-06 0.785401 -2.6422</pose>
+          <velocity>-0.007265 -0.004009 2.3e-05 -0.000174 0.001314 0.264742</velocity>
+          <acceleration>0.177372 0.101767 0.286716 -1.97956 -1.20399 -1.48146</acceleration>
+          <wrench>0.053594 0.030749 0.086633 0 -0 0</wrench>
+        </link>
+        <link name='Link_3_1'>
+          <pose>-0.156535 -0.008365 0.078578 -5e-06 0.308792 -2.6422</pose>
+          <velocity>0.002112 -0.04145 0.000296 0.007478 -0.012074 0.264063</velocity>
+          <acceleration>0.137875 0.276046 -1.19535 0.230931 0.834823 -2.79273</acceleration>
+          <wrench>0.028534 0.057129 -0.247382 0 -0 0</wrench>
+        </link>
+        <link name='Link_4_1'>
+          <pose>-0.141619 -0.097178 0.069187 1.56328 0.308791 -2.6422</pose>
+          <velocity>0.025649 -0.037435 -0.000198 -0.144404 -0.095073 0.208724</velocity>
+          <acceleration>1.69516 1.41888 -7.47152 1.83496 -1.29805 -0.659478</acceleration>
+          <wrench>0.271362 0.227135 -1.19605 0 -0 0</wrench>
+        </link>
+        <link name='Link_5_1'>
+          <pose>-0.255833 -0.137272 0.031232 1.56363 -0.012014 -2.63982</pose>
+          <velocity>0.03761 -0.066762 -0.005299 -0.205143 0.015512 0.209677</velocity>
+          <acceleration>2.06142 1.74057 -7.40573 1.14152 0.071922 0.376473</acceleration>
+          <wrench>0.210096 0.177396 -0.754777 0 -0 0</wrench>
+        </link>
+        <link name='base_link'>
+          <pose>-0 -0 0 0 1e-06 0</pose>
+          <velocity>-0 -0 -8e-06 -2.9e-05 6.5e-05 -4e-06</velocity>
+          <acceleration>0.003542 0.002202 -0.01321 -0.065508 0.066445 0.004017</acceleration>
+          <wrench>0.002695 0.001675 -0.01005 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>1.20379 -0.816588 0.554078 0 0.275643 2.35619</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>

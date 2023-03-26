@@ -1,0 +1,14 @@
+NODES = [
+  'NO_NODE',
+  'ROBOT',
+  'ACCELEROMETER',
+  'CAMERA',
+  'DISTANCE_SENSOR',
+  'GPS',
+  'GYRO',
+  'INERTIAL_UNIT',
+  'MOTOR',
+  "SPEAKER",
+  "TOUCH_SENSOR",
+  "MICROPHONE"
+]

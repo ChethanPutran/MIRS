@@ -1,0 +1,11 @@
+mirs/src/mirs_system/mirs_system/ai/vision/model/yolov7/
+mirs/src/mirs_controller/build/
+mirs/src/mirs_controller/log/
+mirs/src/mirs_controller/install/
+mirs/src/mirs_system/build/
+mirs/src/mirs_system/install/
+mirs/src/mirs_system/log/
+mirs/src/mirs_robot_description/build/
+mirs/src/mirs_robot_description/install/
+mirs/src/mirs_robot_description/log/
+virtual/
