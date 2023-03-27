@@ -1,0 +1,31 @@
+[0.125s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description
+[0.201s] -- Found ament_cmake: 1.3.3 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.530s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.698s] -- Found ament_lint_auto: 0.12.5 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.799s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.914s] -- Added test 'lint_cmake' to check CMake code style
+[1.982s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.405s] -- Added test 'xmllint' to check XML markup files
+[2.487s] -- Configuring done
+[2.911s] -- Generating done
+[3.149s] -- Build files have been written to: /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+[3.160s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description
+[3.211s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+[3.397s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+[3.483s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+[3.504s] -- Install configuration: ""
+[3.526s] -- Execute custom install script
+[3.556s] -- Symlinking: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch
+[3.583s] CMake Error: failed to create symbolic link '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch': Operation not permitted
+[3.607s] [31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:302 (message):
+[3.607s]   Could not create symlink
+[3.607s]   '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch'
+[3.609s]   pointing to
+[3.611s]   '/home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description/launch/controller.launch'
+[3.614s] Call Stack (most recent call first):
+[3.627s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:96 (_ament_cmake_symlink_install_create_symlink)
+[3.629s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:314 (ament_cmake_symlink_install_directory)
+[3.631s]   cmake_install.cmake:46 (include)
+[3.633s] 
+[3.640s] [0m
+[3.642s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description

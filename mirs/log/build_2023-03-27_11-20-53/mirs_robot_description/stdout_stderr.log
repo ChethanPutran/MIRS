@@ -1,0 +1,15 @@
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch
+CMake Error: failed to create symbolic link '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch': Operation not permitted
+[31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:302 (message):
+  Could not create symlink
+  '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch'
+  pointing to
+  '/home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description/launch/controller.launch'
+Call Stack (most recent call first):
+  ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:96 (_ament_cmake_symlink_install_create_symlink)
+  ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:314 (ament_cmake_symlink_install_directory)
+  cmake_install.cmake:46 (include)
+
+[0m

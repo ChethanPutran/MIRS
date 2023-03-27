@@ -1,0 +1,25 @@
+-- Found ament_cmake: 1.3.3 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found ament_lint_auto: 0.12.5 (/opt/ros/humble/share/ament_lint_auto/cmake)
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch
+CMake Error: failed to create symbolic link '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch': Operation not permitted
+[31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:302 (message):
+  Could not create symlink
+  '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch'
+  pointing to
+  '/home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description/launch/controller.launch'
+Call Stack (most recent call first):
+  ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:96 (_ament_cmake_symlink_install_create_symlink)
+  ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:314 (ament_cmake_symlink_install_directory)
+  cmake_install.cmake:46 (include)
+
+[0m

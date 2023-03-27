@@ -1,0 +1,19 @@
+[0.131s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+[0.225s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+[0.290s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+[0.323s] -- Install configuration: ""
+[0.361s] -- Execute custom install script
+[0.405s] -- Symlinking: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch
+[0.426s] CMake Error: failed to create symbolic link '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch': Operation not permitted
+[0.442s] [31mCMake Error at ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:302 (message):
+[0.443s]   Could not create symlink
+[0.454s]   '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch'
+[0.466s]   pointing to
+[0.466s]   '/home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description/launch/controller.launch'
+[0.466s] Call Stack (most recent call first):
+[0.467s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:96 (_ament_cmake_symlink_install_create_symlink)
+[0.467s]   ament_cmake_symlink_install/ament_cmake_symlink_install.cmake:314 (ament_cmake_symlink_install_directory)
+[0.468s]   cmake_install.cmake:46 (include)
+[0.468s] 
+[0.468s] [0m
+[0.469s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '1': /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description

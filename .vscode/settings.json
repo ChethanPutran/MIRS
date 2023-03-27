@@ -3,4 +3,15 @@
         "*.js": "javascriptreact",
         "iostream": "cpp"
     }
+    ,
+    "python.autoComplete.extraPaths": [
+        "/home/chethan/Desktop/MajorProject/software/mirs/install/tutorials/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/chethan/Desktop/MajorProject/software/mirs/install/tutorials/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
 }

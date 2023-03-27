@@ -1,0 +1,4 @@
+Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '1': /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description

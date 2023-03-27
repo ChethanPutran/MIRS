@@ -1,0 +1,63 @@
+[0.117s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description -DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description
+[0.527s] -- The C compiler identification is GNU 11.3.0
+[0.911s] -- The CXX compiler identification is GNU 11.3.0
+[1.029s] -- Detecting C compiler ABI info
+[2.624s] -- Detecting C compiler ABI info - done
+[2.671s] -- Check for working C compiler: /usr/bin/cc - skipped
+[2.680s] -- Detecting C compile features
+[2.684s] -- Detecting C compile features - done
+[2.813s] -- Detecting CXX compiler ABI info
+[4.452s] -- Detecting CXX compiler ABI info - done
+[4.518s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[4.519s] -- Detecting CXX compile features
+[4.521s] -- Detecting CXX compile features - done
+[4.634s] -- Found ament_cmake: 1.3.3 (/opt/ros/humble/share/ament_cmake/cmake)
+[5.053s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.6") found components: Interpreter 
+[5.358s] -- Found ament_lint_auto: 0.12.5 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[6.381s] -- Added test 'flake8' to check Python code syntax and style conventions
+[6.492s] -- Added test 'lint_cmake' to check CMake code style
+[6.552s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[6.987s] -- Added test 'xmllint' to check XML markup files
+[7.139s] -- Configuring done
+[7.660s] -- Generating done
+[7.762s] -- Build files have been written to: /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+[7.766s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description -DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description
+[7.784s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+[7.952s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description -- -j4 -l4
+[8.096s] Invoking command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description
+[8.120s] -- Install configuration: ""
+[8.150s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch
+[8.235s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch
+[8.317s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.yaml
+[8.436s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/display.launch
+[8.516s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/gazebo.launch
+[8.594s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/robot.launch.py
+[8.637s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/robot_sim.launch.py
+[8.660s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf
+[8.673s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/gazebo.xacro
+[8.699s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/materials.xacro
+[8.727s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/robot.trans
+[8.758s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/robot.xacro
+[8.798s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes
+[8.812s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/base_link.stl
+[8.970s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_1.stl
+[9.123s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_2.stl
+[9.276s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_3.stl
+[9.490s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_4.stl
+[9.663s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_5.stl
+[9.816s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/ament_index/resource_index/package_run_dependencies/mirs_robot_description
+[9.879s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/ament_index/resource_index/parent_prefix_path/mirs_robot_description
+[9.969s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/ament_prefix_path.sh
+[9.994s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/ament_prefix_path.dsv
+[10.022s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/path.sh
+[10.071s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/path.dsv
+[10.125s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.bash
+[10.172s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.sh
+[10.197s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.zsh
+[10.254s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.dsv
+[10.282s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/package.dsv
+[10.336s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/ament_index/resource_index/packages/mirs_robot_description
+[10.376s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/cmake/mirs_robot_descriptionConfig.cmake
+[10.418s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/cmake/mirs_robot_descriptionConfig-version.cmake
+[10.468s] -- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/package.xml
+[10.531s] Invoked command in '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description

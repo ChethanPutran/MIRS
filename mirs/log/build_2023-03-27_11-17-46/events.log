@@ -1,0 +1,180 @@
+[0.000000] (-) TimerEvent: {}
+[0.000572] (-) JobUnselected: {'identifier': 'mirs_controller'}
+[0.001712] (-) JobUnselected: {'identifier': 'mirs_system'}
+[0.002477] (mirs_robot_description) JobQueued: {'identifier': 'mirs_robot_description', 'dependencies': OrderedDict()}
+[0.003192] (mirs_robot_description) JobStarted: {'identifier': 'mirs_robot_description'}
+[0.054915] (mirs_robot_description) JobProgress: {'identifier': 'mirs_robot_description', 'progress': 'cmake'}
+[0.066941] (mirs_robot_description) Command: {'cmd': ['/usr/bin/cmake', '/home/chethan/Desktop/MajorProject/software/mirs/src/mirs_robot_description', '-DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description'], 'cwd': '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_IN:en'), ('USER', 'chethan'), ('XDG_SESSION_TYPE', 'wayland'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/chethan'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('OLDPWD', '/home/chethan/Desktop/MajorProject/software/mirs/src'), ('TERM_PROGRAM_VERSION', '1.76.2'), ('DESKTOP_SESSION', 'ubuntu'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('DBUS_STARTER_BUS_TYPE', 'session'), ('SYSTEMD_EXEC_PID', '1585'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus,guid=f873139b11207abfc6a320456421103d'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'chethan'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'chethan'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/chethan-putran:@/tmp/.ICE-unix/1585,unix/chethan-putran:/tmp/.ICE-unix/1585'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/56c1c72a_8396_4f8c_8276_42a820f49cce'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IEO021'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-2fff675580.sock'), ('GNOME_TERMINAL_SERVICE', ':1.912'), ('TERM_PROGRAM', 'vscode'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description:/opt/ros/humble'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('DBUS_STARTER_ADDRESS', 'unix:path=/run/user/1000/bus,guid=f873139b11207abfc6a320456421103d'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description:/opt/ros/humble')]), 'shell': False}
+[0.123129] (-) TimerEvent: {}
+[0.225056] (-) TimerEvent: {}
+[0.334176] (-) TimerEvent: {}
+[0.435134] (-) TimerEvent: {}
+[0.529547] (mirs_robot_description) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.3.0\n'}
+[0.535201] (-) TimerEvent: {}
+[0.636461] (-) TimerEvent: {}
+[0.737678] (-) TimerEvent: {}
+[0.838388] (-) TimerEvent: {}
+[0.911454] (mirs_robot_description) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.3.0\n'}
+[0.938612] (-) TimerEvent: {}
+[1.031899] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[1.038793] (-) TimerEvent: {}
+[1.140036] (-) TimerEvent: {}
+[1.240953] (-) TimerEvent: {}
+[1.343761] (-) TimerEvent: {}
+[1.451098] (-) TimerEvent: {}
+[1.551913] (-) TimerEvent: {}
+[1.658294] (-) TimerEvent: {}
+[1.763275] (-) TimerEvent: {}
+[1.874955] (-) TimerEvent: {}
+[1.984890] (-) TimerEvent: {}
+[2.089510] (-) TimerEvent: {}
+[2.190146] (-) TimerEvent: {}
+[2.292550] (-) TimerEvent: {}
+[2.393807] (-) TimerEvent: {}
+[2.501526] (-) TimerEvent: {}
+[2.602369] (-) TimerEvent: {}
+[2.624003] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[2.674211] (mirs_robot_description) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[2.675074] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[2.683780] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[2.702596] (-) TimerEvent: {}
+[2.804739] (-) TimerEvent: {}
+[2.814151] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[2.905024] (-) TimerEvent: {}
+[3.008278] (-) TimerEvent: {}
+[3.109053] (-) TimerEvent: {}
+[3.211809] (-) TimerEvent: {}
+[3.313188] (-) TimerEvent: {}
+[3.419039] (-) TimerEvent: {}
+[3.520591] (-) TimerEvent: {}
+[3.622004] (-) TimerEvent: {}
+[3.723687] (-) TimerEvent: {}
+[3.829339] (-) TimerEvent: {}
+[3.933167] (-) TimerEvent: {}
+[4.035941] (-) TimerEvent: {}
+[4.140991] (-) TimerEvent: {}
+[4.244244] (-) TimerEvent: {}
+[4.348402] (-) TimerEvent: {}
+[4.453605] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[4.455651] (-) TimerEvent: {}
+[4.519630] (mirs_robot_description) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[4.521765] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[4.523122] (mirs_robot_description) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[4.555927] (-) TimerEvent: {}
+[4.636396] (mirs_robot_description) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.3 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[4.656161] (-) TimerEvent: {}
+[4.757037] (-) TimerEvent: {}
+[4.857991] (-) TimerEvent: {}
+[4.958613] (-) TimerEvent: {}
+[5.044560] (mirs_robot_description) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3.10 (found version "3.10.6") found components: Interpreter \n'}
+[5.059566] (-) TimerEvent: {}
+[5.160365] (-) TimerEvent: {}
+[5.265030] (-) TimerEvent: {}
+[5.347628] (mirs_robot_description) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.5 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[5.365330] (-) TimerEvent: {}
+[5.467068] (-) TimerEvent: {}
+[5.570897] (-) TimerEvent: {}
+[5.674664] (-) TimerEvent: {}
+[5.775789] (-) TimerEvent: {}
+[5.876928] (-) TimerEvent: {}
+[5.977592] (-) TimerEvent: {}
+[6.087061] (-) TimerEvent: {}
+[6.191005] (-) TimerEvent: {}
+[6.291497] (-) TimerEvent: {}
+[6.383709] (mirs_robot_description) StdoutLine: {'line': b"-- Added test 'flake8' to check Python code syntax and style conventions\n"}
+[6.391650] (-) TimerEvent: {}
+[6.492414] (-) TimerEvent: {}
+[6.495182] (mirs_robot_description) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[6.555641] (mirs_robot_description) StdoutLine: {'line': b"-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257\n"}
+[6.592657] (-) TimerEvent: {}
+[6.693183] (-) TimerEvent: {}
+[6.793897] (-) TimerEvent: {}
+[6.895309] (-) TimerEvent: {}
+[6.989974] (mirs_robot_description) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[6.995432] (-) TimerEvent: {}
+[7.096168] (-) TimerEvent: {}
+[7.141025] (mirs_robot_description) StdoutLine: {'line': b'-- Configuring done\n'}
+[7.196348] (-) TimerEvent: {}
+[7.297052] (-) TimerEvent: {}
+[7.398330] (-) TimerEvent: {}
+[7.500201] (-) TimerEvent: {}
+[7.602317] (-) TimerEvent: {}
+[7.661519] (mirs_robot_description) StdoutLine: {'line': b'-- Generating done\n'}
+[7.702515] (-) TimerEvent: {}
+[7.763147] (mirs_robot_description) StdoutLine: {'line': b'-- Build files have been written to: /home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description\n'}
+[7.769067] (mirs_robot_description) CommandEnded: {'returncode': 0}
+[7.772067] (mirs_robot_description) JobProgress: {'identifier': 'mirs_robot_description', 'progress': 'build'}
+[7.775784] (mirs_robot_description) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description', '--', '-j4', '-l4'], 'cwd': '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_IN:en'), ('USER', 'chethan'), ('XDG_SESSION_TYPE', 'wayland'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/chethan'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('OLDPWD', '/home/chethan/Desktop/MajorProject/software/mirs/src'), ('TERM_PROGRAM_VERSION', '1.76.2'), ('DESKTOP_SESSION', 'ubuntu'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('DBUS_STARTER_BUS_TYPE', 'session'), ('SYSTEMD_EXEC_PID', '1585'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus,guid=f873139b11207abfc6a320456421103d'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'chethan'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'chethan'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/chethan-putran:@/tmp/.ICE-unix/1585,unix/chethan-putran:/tmp/.ICE-unix/1585'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/56c1c72a_8396_4f8c_8276_42a820f49cce'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IEO021'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-2fff675580.sock'), ('GNOME_TERMINAL_SERVICE', ':1.912'), ('TERM_PROGRAM', 'vscode'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description:/opt/ros/humble'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('DBUS_STARTER_ADDRESS', 'unix:path=/run/user/1000/bus,guid=f873139b11207abfc6a320456421103d'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description:/opt/ros/humble')]), 'shell': False}
+[7.802691] (-) TimerEvent: {}
+[7.904027] (-) TimerEvent: {}
+[7.953137] (mirs_robot_description) CommandEnded: {'returncode': 0}
+[8.004200] (-) TimerEvent: {}
+[8.074813] (mirs_robot_description) JobProgress: {'identifier': 'mirs_robot_description', 'progress': 'install'}
+[8.097935] (mirs_robot_description) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description'], 'cwd': '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_IN:en'), ('USER', 'chethan'), ('XDG_SESSION_TYPE', 'wayland'), ('GIT_ASKPASS', '/usr/share/code/resources/app/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/chethan'), ('CHROME_DESKTOP', 'code-url-handler.desktop'), ('OLDPWD', '/home/chethan/Desktop/MajorProject/software/mirs/src'), ('TERM_PROGRAM_VERSION', '1.76.2'), ('DESKTOP_SESSION', 'ubuntu'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('VSCODE_GIT_ASKPASS_MAIN', '/usr/share/code/resources/app/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/usr/share/code/code'), ('DBUS_STARTER_BUS_TYPE', 'session'), ('SYSTEMD_EXEC_PID', '1585'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus,guid=f873139b11207abfc6a320456421103d'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'chethan'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'chethan'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/chethan-putran:@/tmp/.ICE-unix/1585,unix/chethan-putran:/tmp/.ICE-unix/1585'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/56c1c72a_8396_4f8c_8276_42a820f49cce'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'Unity'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IEO021'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-2fff675580.sock'), ('GNOME_TERMINAL_SERVICE', ':1.912'), ('TERM_PROGRAM', 'vscode'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description:/opt/ros/humble'), ('ORIGINAL_XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', '--ms-enable-electron-run-as-node'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/chethan/Desktop/MajorProject/software/mirs/build/mirs_robot_description'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('DBUS_STARTER_ADDRESS', 'unix:path=/run/user/1000/bus,guid=f873139b11207abfc6a320456421103d'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description:/opt/ros/humble')]), 'shell': False}
+[8.104487] (-) TimerEvent: {}
+[8.118997] (mirs_robot_description) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[8.151417] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch\n'}
+[8.204799] (-) TimerEvent: {}
+[8.223184] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.launch\n'}
+[8.304967] (-) TimerEvent: {}
+[8.310784] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/controller.yaml\n'}
+[8.405171] (-) TimerEvent: {}
+[8.436926] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/display.launch\n'}
+[8.505307] (-) TimerEvent: {}
+[8.518136] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/gazebo.launch\n'}
+[8.594623] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/robot.launch.py\n'}
+[8.605429] (-) TimerEvent: {}
+[8.640221] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/launch/robot_sim.launch.py\n'}
+[8.662298] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf\n'}
+[8.675131] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/gazebo.xacro\n'}
+[8.701700] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/materials.xacro\n'}
+[8.705594] (-) TimerEvent: {}
+[8.726567] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/robot.trans\n'}
+[8.758601] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/urdf/robot.xacro\n'}
+[8.797199] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes\n'}
+[8.805776] (-) TimerEvent: {}
+[8.813591] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/base_link.stl\n'}
+[8.905931] (-) TimerEvent: {}
+[8.973157] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_1.stl\n'}
+[9.006081] (-) TimerEvent: {}
+[9.107147] (-) TimerEvent: {}
+[9.123935] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_2.stl\n'}
+[9.207299] (-) TimerEvent: {}
+[9.279134] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_3.stl\n'}
+[9.307495] (-) TimerEvent: {}
+[9.408473] (-) TimerEvent: {}
+[9.492888] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_4.stl\n'}
+[9.508679] (-) TimerEvent: {}
+[9.609367] (-) TimerEvent: {}
+[9.664361] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/meshes/Link_5.stl\n'}
+[9.709512] (-) TimerEvent: {}
+[9.809883] (-) TimerEvent: {}
+[9.819159] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/ament_index/resource_index/package_run_dependencies/mirs_robot_description\n'}
+[9.881933] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/ament_index/resource_index/parent_prefix_path/mirs_robot_description\n'}
+[9.910929] (-) TimerEvent: {}
+[9.971156] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/ament_prefix_path.sh\n'}
+[9.995292] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/ament_prefix_path.dsv\n'}
+[10.011084] (-) TimerEvent: {}
+[10.024543] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/path.sh\n'}
+[10.072838] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/environment/path.dsv\n'}
+[10.111286] (-) TimerEvent: {}
+[10.127282] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.bash\n'}
+[10.173072] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.sh\n'}
+[10.200009] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.zsh\n'}
+[10.211544] (-) TimerEvent: {}
+[10.255090] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/local_setup.dsv\n'}
+[10.284320] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/package.dsv\n'}
+[10.311743] (-) TimerEvent: {}
+[10.338394] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/ament_index/resource_index/packages/mirs_robot_description\n'}
+[10.379179] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/cmake/mirs_robot_descriptionConfig.cmake\n'}
+[10.411911] (-) TimerEvent: {}
+[10.418225] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/cmake/mirs_robot_descriptionConfig-version.cmake\n'}
+[10.469868] (mirs_robot_description) StdoutLine: {'line': b'-- Installing: /home/chethan/Desktop/MajorProject/software/mirs/install/mirs_robot_description/share/mirs_robot_description/package.xml\n'}
+[10.512089] (-) TimerEvent: {}
+[10.517644] (mirs_robot_description) CommandEnded: {'returncode': 0}
+[10.612182] (-) TimerEvent: {}
+[10.713128] (-) TimerEvent: {}
+[10.814952] (-) TimerEvent: {}
+[10.918269] (-) TimerEvent: {}
+[10.923168] (mirs_robot_description) JobEnded: {'identifier': 'mirs_robot_description', 'rc': 0}
+[10.933429] (-) EventReactorShutdown: {}
