@@ -204,10 +204,16 @@ class Camera:
     v0 - y offset in image coordinate
 
     """
-    f = 10  # in mm
-    b = 10
+    f = 2.6  # in mm
+    b = 60   # in mm
     u0 = 2
     v0 = 1
+    FOV_H = 73
+    FOV_V = 50
+    FOV_d = 83
+    aperture = 2.4
+    resolution = (3280 , 2464 )
+
 
     def __init__(self, size=100):
         self.camera = 0
