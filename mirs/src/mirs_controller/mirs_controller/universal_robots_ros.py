@@ -5,7 +5,6 @@ import argparse
 import rospy
 
 from controller import Robot
-from 
 from ur_e_webots.trajectory_follower import TrajectoryFollower
 
 

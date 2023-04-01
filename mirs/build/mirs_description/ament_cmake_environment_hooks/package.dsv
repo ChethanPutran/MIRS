@@ -1,0 +1,4 @@
+source;share/mirs_description/local_setup.bash
+source;share/mirs_description/local_setup.dsv
+source;share/mirs_description/local_setup.sh
+source;share/mirs_description/local_setup.zsh

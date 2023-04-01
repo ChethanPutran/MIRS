@@ -1,0 +1,67 @@
+[0.048s] Invoking command in '/home/chethan/Desktop/MajorProject/mirs/build/mirs_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chethan/Desktop/MajorProject/mirs/install/mirs_system:/home/chethan/Desktop/MajorProject/mirs/install/mirs_controller:/opt/ros/humble /usr/bin/cmake /home/chethan/Desktop/MajorProject/mirs/src/mirs_description -DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/mirs/install/mirs_description
+[0.181s] -- The C compiler identification is GNU 11.3.0
+[0.265s] -- The CXX compiler identification is GNU 11.3.0
+[0.277s] -- Detecting C compiler ABI info
+[0.390s] -- Detecting C compiler ABI info - done
+[0.406s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.407s] -- Detecting C compile features
+[0.409s] -- Detecting C compile features - done
+[0.410s] -- Detecting CXX compiler ABI info
+[0.524s] -- Detecting CXX compiler ABI info - done
+[0.540s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.540s] -- Detecting CXX compile features
+[0.540s] -- Detecting CXX compile features - done
+[0.543s] -- Found ament_cmake: 1.3.3 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.754s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.6") found components: Interpreter 
+[0.862s] -- Found ament_lint_auto: 0.12.5 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.954s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.955s] -- Added test 'lint_cmake' to check CMake code style
+[0.956s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.958s] -- Added test 'xmllint' to check XML markup files
+[0.961s] -- Configuring done
+[0.967s] -- Generating done
+[0.967s] -- Build files have been written to: /home/chethan/Desktop/MajorProject/mirs/build/mirs_description
+[0.975s] Invoked command in '/home/chethan/Desktop/MajorProject/mirs/build/mirs_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chethan/Desktop/MajorProject/mirs/install/mirs_system:/home/chethan/Desktop/MajorProject/mirs/install/mirs_controller:/opt/ros/humble /usr/bin/cmake /home/chethan/Desktop/MajorProject/mirs/src/mirs_description -DCMAKE_INSTALL_PREFIX=/home/chethan/Desktop/MajorProject/mirs/install/mirs_description
+[0.976s] Invoking command in '/home/chethan/Desktop/MajorProject/mirs/build/mirs_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chethan/Desktop/MajorProject/mirs/install/mirs_system:/home/chethan/Desktop/MajorProject/mirs/install/mirs_controller:/opt/ros/humble /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/mirs/build/mirs_description -- -j4 -l4
+[1.022s] Invoked command in '/home/chethan/Desktop/MajorProject/mirs/build/mirs_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chethan/Desktop/MajorProject/mirs/install/mirs_system:/home/chethan/Desktop/MajorProject/mirs/install/mirs_controller:/opt/ros/humble /usr/bin/cmake --build /home/chethan/Desktop/MajorProject/mirs/build/mirs_description -- -j4 -l4
+[1.076s] Invoking command in '/home/chethan/Desktop/MajorProject/mirs/build/mirs_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chethan/Desktop/MajorProject/mirs/install/mirs_system:/home/chethan/Desktop/MajorProject/mirs/install/mirs_controller:/opt/ros/humble /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/mirs/build/mirs_description
+[1.083s] -- Install configuration: ""
+[1.084s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src
+[1.084s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes
+[1.084s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes/Link_5.stl
+[1.111s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes/Link_1.stl
+[1.134s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes/Link_2.stl
+[1.161s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes/Link_3.stl
+[1.183s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes/base_link.stl
+[1.189s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/meshes/Link_4.stl
+[1.211s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/description
+[1.211s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/description/gazebo.xacro
+[1.211s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/description/materials.xacro
+[1.212s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/description/mirs_description.urdf
+[1.212s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/src/description/mirs_description.trans
+[1.212s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch
+[1.212s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/display.launch
+[1.213s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/controller.yaml
+[1.215s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/robot.launch.py
+[1.215s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/robot_sim.launch.py
+[1.216s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/gazebo.launch
+[1.216s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/display.launch.py
+[1.217s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/launch/controller.launch
+[1.217s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/rviz
+[1.217s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/rviz/urdf_config.rviz
+[1.218s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/ament_index/resource_index/package_run_dependencies/mirs_description
+[1.219s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/ament_index/resource_index/parent_prefix_path/mirs_description
+[1.220s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/environment/ament_prefix_path.sh
+[1.221s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/environment/ament_prefix_path.dsv
+[1.221s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/environment/path.sh
+[1.222s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/environment/path.dsv
+[1.223s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/local_setup.bash
+[1.223s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/local_setup.sh
+[1.224s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/local_setup.zsh
+[1.224s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/local_setup.dsv
+[1.224s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/package.dsv
+[1.225s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/ament_index/resource_index/packages/mirs_description
+[1.225s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/cmake/mirs_descriptionConfig.cmake
+[1.225s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/cmake/mirs_descriptionConfig-version.cmake
+[1.226s] -- Installing: /home/chethan/Desktop/MajorProject/mirs/install/mirs_description/share/mirs_description/package.xml
+[1.229s] Invoked command in '/home/chethan/Desktop/MajorProject/mirs/build/mirs_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/chethan/Desktop/MajorProject/mirs/install/mirs_system:/home/chethan/Desktop/MajorProject/mirs/install/mirs_controller:/opt/ros/humble /usr/bin/cmake --install /home/chethan/Desktop/MajorProject/mirs/build/mirs_description
