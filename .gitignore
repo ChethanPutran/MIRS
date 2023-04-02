@@ -1,5 +1,8 @@
 mirs/src/mirs_system/mirs_system/ai/vision/model/yolov7/
 mirs/build/
+mirs/build
 mirs/log/
+mirs/log
 mirs/install/
+mirs/install
 virtual/
