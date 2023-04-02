@@ -6,7 +6,7 @@ import xacro
 
 
 def generate_launch_description():
-    pkg_name = "mirs_robot_description"
+    pkg_name = "mirs_description"
     file_path = "urdf/robot.xacro"
 
     # # Process xacro file

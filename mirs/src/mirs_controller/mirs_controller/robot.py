@@ -6,26 +6,24 @@ import cv2
 from dynamics.dynamics import Dynamics
 from kinematics.kinematics import Kinematics
 from trajectory.planning.trajectory_planner import TrajectoryPlanner
-from trajectory.control.joint_state_publisher import JointStatePublisher
 from trajectory.control.robot_state_publisher import RobotStatePublisher
 from trajectory.control.trajectory_follower import TrajectoryFollower
 from common.config import MODES,INPUT_EVENTS,JOINT_NAMES,JOINT_SENSOR_NAMES,JOINTS,JOINT_TYPE
 from devices.motor import Motor
 from devices.camera import Camera
 from devices.sensors import JointSensor
-
+from mirs_interfaces.msg import JointState
+from trajectory.control.controllers import JointController
 
 class Joint:
-    def __init__(self,joint_name,joint_type=JOINT_TYPE['REVOLUTE']) -> None:
+    def __init__(self,joint_name,Kp=1,Kd=1,Ki=1,joint_type=JOINT_TYPE['REVOLUTE']) -> None:
         self.motor = Motor('MOTOR_'+joint_name,JOINTS[joint_name])
+        self.controller = JointController(joint_name,self.motor,Kp,Kd,Ki)
         self.type = joint_type
         self.name = joint_name
-        self.kp = 1
-        self.kd = 1
-        self.ki = 1
-
-    def set_velocity(self,velocity):
-        self.motor.set_velocity(velocity)
+        
+    def get_name(self):
+        return self.name
 
 class EndEffector:
     def __init__(self,joint_velocity=2):

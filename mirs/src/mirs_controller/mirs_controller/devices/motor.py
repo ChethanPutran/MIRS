@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 from rclpy.node import Node
-from mirs_msgs.msg import MotorState
-from common.msg import MotorState,SensorState
+from mirs_interfaces.msg import MotorState,MotorSensorFeedback
 from common.topics import TOPICS
         
 class Motor(Node):
     def __init__(self,motor_name,motor_num):
-        super().__init__('Motor')
+        super().__init__(motor_name)
         self.id = motor_num
         self.name = motor_name
         self.position = 0
@@ -20,8 +19,8 @@ class Motor(Node):
         self.Kp = 1
         self.Kd = 1
         self.Ki = 1
-        self.motor_state_publisher = self.create_publisher(MotorState,f"/{motor_name}",10)
-        self.motor_state_feedback_subscriber = self.create_subscription(MotorState,f"/{motor_name}_feedback",self.set_state)
+        self.motor_state_publisher = self.create_publisher(MotorState,f"/{motor_name}_state",10)
+        self.motor_state_feedback_subscriber = self.create_subscription(MotorSensorFeedback,f"/{motor_name}_feedback",self.set_state)
 
     # Setters
     def set_state(self,motor_state):

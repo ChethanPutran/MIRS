@@ -95,8 +95,10 @@ Gazebo - a robot environment simulator
 > ros2 topic list
 > ros2 topic info topic_name
 > ros2 interface show msg_type
+> ros2 topic echo topic_name
 > rqt_graph
 > ros2 run tf2_tools view_frames.py
+> 
 
 ### Using Launch files to run node/s
 

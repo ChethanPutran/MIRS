@@ -1,69 +1,36 @@
 #!/usr/bin/env python3
-import rclpy
 from rclpy.node import Node
-from mirs_controller.msg import MotorState,JointState
-from mirs_controller.topics import TOPICS
-from mirs_controller.robot import Robot 
-from mirs_controller.config import JOINT_NAMES,JOINT_SENSOR_NAMES
-import numpy as np
-import time
-
+from mirs_interfaces.msg import MotorSensorFeedback,JointState
+from mirs_controller.common.topics import TOPICS
+from mirs_controller.common.config import JOINT_NAMES,JOINT_SENSOR_NAMES
 
 class JointStatePublisher(Node):
-    def __init__(self,robot:Robot)-> None:
-        super().__init__('Motor')
-        self.robot = robot
-        self.state = JointState(robot.DOF)
-        self.previous_joint_states = JointState(robot.DOF)
-        self.state_publisher = self.create_publisher(MotorState,TOPICS.TOPIC_JOINT_STATE,1)
-        self.state_subscriber = self.create_subscription(MotorState,TOPICS.TOPIC_JOINT_STATE,self.set_state,10)
-        self.joint_names = JOINT_NAMES
-        self.joint_sensor_names = JOINT_SENSOR_NAMES
+    def __init__(self,publish_period=1)-> None:
+        super().__init__('JointStatePublisher')
+        self.state = {}
+        self.previous_joint_states = {}
+        self.publish_period = publish_period
+
+        for i,joint_sensor in enumerate(JOINT_SENSOR_NAMES):
+            self.create_subscription(MotorSensorFeedback,joint_sensor+'_feedback',self.set_state)
+            self.state[JOINT_NAMES[i]] = {"position":0,"velocity":0,"acceleration":0,"torque":0}
+            self.previous_joint_states[JOINT_NAMES[i]] = {"position":0,"velocity":0,"acceleration":0,"torque":0}
+
+        self.state_publisher = self.create_publisher(JointState,TOPICS.TOPIC_JOINT_STATE,1)
         self.current_time = 0
         self.previous_time = 0
-        self.motors = []
-        self.sensors = []
-        for joint_name,sensor_name in enumerate(self.joint_names,self.joint_sensor_names):
-            self.motors.append(robot.get_device(joint_name))
-            self.sensors.append(robot.get_device(sensor_name))
 
-    def set_vals(self):
-        self.current_time = time.time()
-        time_diff = (self.robot.get_time() - self.previous_time)
-        msg = JointState()
-        msg.header.frame_id = "From simulation state data"
-        msg.name = [s + self.jointPrefix for s in self.joint_names]
-        msg.position = []
-        
-        for i in range(len(self.sensors)):
-            value = self.sensors[i].getValue()
-            msg.position.append(value)
-            msg.velocity.append((value - self.previousPosition[i]) / time_diff if time_diff > 0 else 0.0)
-            self.previousPosition[i] = value
-        
-        self.previous_time = self.current_time
-
-    def set_state(self,state: JointState):
-        self.get_logger().info(f"Got state : {state.to_string()}")
-        self.state = state
-
-    def get_state(self)-> MotorState:
-        return self.state
+        self.timer = self.create_timer(publish_period,self.publish_state)
     
-    def publish(self):
-        """Publish the 'joint_states' topic with up to date value."""
+    def set_state(self,msg):
+        self.get_logger().info(f"Got state : {msg}")
+        self.state[msg.data.name]['position'] = msg.data.position
+        self.state[msg.data.name]['velocity'] = msg.data.velocity
+        self.state[msg.data.name]['acceleration'] = msg.data.acceleration
+        self.state[msg.data.name]['torque'] = msg.data.torque
+
+    def publish_state(self):
         msg = JointState()
-        msg.header.stamp = self.robot.get_time()
-        msg.header.frame_id = "From simulation state data"
-        msg.name = [s + self.jointPrefix for s in self.joint_names]
-        msg.position = []
-        timeDifference = self.robot.get_time() - self.previousTime
-        for i in range(len(self.sensors)):
-            value = self.sensors[i].getValue()
-            msg.position.append(value)
-            msg.velocity.append((value - self.previousPosition[i]) / timeDifference if timeDifference > 0 else 0.0)
-            self.previousPosition[i] = value
-        msg.effort = [0] * 6
-        self.publisher.publish(msg)
-        self.last_joint_states = msg
-        self.previousTime = self.robot.get_time()
+        msg.data = self.state
+        self.state_publisher.publish(msg)
+    

@@ -1,4 +1,4 @@
-from common.msg import SensorState
+from mirs.src.mirs_interfaces.msg.msg import SensorState
 from common.topics import TOPICS
 from rclpy.node import Node
 

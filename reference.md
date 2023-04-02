@@ -29,3 +29,6 @@ https://www.youtube.com/watch?v=Fd7wjZDoh7g
 https://www.mathworks.com/help/robotics/ref/jointspacemotionmodel.html
 
 https://www.mathworks.com/help/robotics/ug/simulate-joint-space-trajectory-tracking.html
+
+
+https://articulatedrobotics.xyz/ready-for-ros-8-gazebo/

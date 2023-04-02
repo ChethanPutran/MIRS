@@ -1,5 +1,3 @@
-
-import actionlib
 import actionlib_msgs
 import copy
 import math
@@ -215,14 +213,14 @@ class TrajectoryFollower(object):
 
         ee_planner = EEPlanner()
         ee_controller = EEController()
-        joint_controllers = [JointController(joint.name,joint.motor,joint.kp,joint.kd) for joint in robot.JOINTS]
+        joint_controllers = [joint.controller for joint in robot.JOINTS]
         action_sequence = ee_planner.get_action_sequence(action,task_object,trajectory.time_length)
 
         try:
-            for point,time_stamp in enumerate(trajectory.points,trajectory.times):
+            for point,time_stamp in zip(trajectory.points,trajectory.times):
                 
                 # Move joints with joint controller
-                for joint_controller,theta in enumerate(joint_controllers,point):
+                for joint_controller,theta in zip(joint_controllers,point):
                     joint_controller.forward(*theta)
 
                 # Perform action

@@ -2,12 +2,13 @@ import numpy as np
 from dynamics.dynamics import Dynamics
 
 class JointController:
-    def __init__(self,name,motor,Kp,Kd):
+    def __init__(self,name,motor,Kp,Kd,Ki):
         self.motor = motor
         self.pre_theta = 0
         self.pre_theta_dot = 0
         self.Kp = Kp
         self.Kd = Kd 
+        self.Ki = Ki
         self.dynamics  = Dynamics()
         self.name = name
 
