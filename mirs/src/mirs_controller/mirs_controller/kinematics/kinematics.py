@@ -1,6 +1,6 @@
 import numpy as np
-from ikpy.chain import Chain
-from transformations.matrices import Matrices
+#from ikpy.chain import Chain
+from mirs_controller.transformations.matrices import Matrices
 pi = np.pi
 cos = np.cos
 sin = np.sin
@@ -15,10 +15,10 @@ L6 = 25
 
 class Kinematics:
     def __init__(self):
-        self.matrices = Matrices()
+        self.matrices = Matrices
 
-    def forward(self):
-        pass
+    def forward(self,theta):
+        return np.dot(self.matrices.get_ee_pose(),theta)
         
 
     def inverse(self,x,y,z,theta,beta,gamma):

@@ -1,23 +1,49 @@
 import numpy as np
 import cv2 
+from rclpy.node import Node
+import io
+import socket
+import struct
+from PIL import Image
+import matplotlib.pyplot as pl
 
-class Camera:
-  def __init__(self,supervisor):
-    self.supervisor = supervisor
-    self.recognition_object = {
-   'id':0, 
-   'position' : [],
-  'orientation': [4],
-  'size' : [2],
-  'position_on_image':[],
-  'size_on_image':[],
-  'number_of_colors':0,
-  'colors':[],
-  'model' : ''
-    }
-    self.camera = self.supervisor.getCamera()
-    self.camera.enable(self.supervisor.timestep)
+class Connection:
+  def __init__(self,host='raspberrypi.local',port=8000):
+    self.client_socket = socket.socket()
+    self.client_socket.connect((host, port))
+    self.connection = self.client_socket.makefile('wb')
+  
+  def getImageArray(self):
+      while True:
+        image_len = struct.unpack('<L', self.connection.read(struct.calcsize('<L')))[0]
+        if not image_len:
+            break
+        # Construct a stream to hold the image data and read the image
+        # data from the connection
+        image_stream = io.BytesIO()
+        image_stream.write(self.connection.read(image_len))
+        # Rewind the stream, open it as an image with PIL and do some
+        # processing on it
+        image_stream.seek(0)
+        image = Image.open(image_stream)
+        
+        if img is None:
+            img = pl.imshow(image)
+        else:
+            img.set_data(image)
 
+        pl.pause(0.01)
+        pl.draw()
+
+        print('Image is %dx%d' % image.size)
+        image.verify()
+        print('Image is verified')
+        return image
+
+class Camera(Node):
+  def __init__(self):
+    super().__init__('Camera')
+    self.camera = None #Connection()
 
   def get_image_from_camera(self):
       img = self.camera.getImageArray()

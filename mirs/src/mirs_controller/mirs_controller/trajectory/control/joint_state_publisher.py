@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+import rclpy
 from rclpy.node import Node
 from mirs_interfaces.msg import MotorSensorFeedback,JointState
-from mirs_controller.common.topics import TOPICS
+from mirs_interfaces.topics.topics import TOPICS
 from mirs_controller.common.config import JOINT_NAMES,JOINT_SENSOR_NAMES
 
 class JointStatePublisher(Node):
@@ -30,7 +31,23 @@ class JointStatePublisher(Node):
         self.state[msg.data.name]['torque'] = msg.data.torque
 
     def publish_state(self):
+        self.get_logger().info("Publishing joint state...")
         msg = JointState()
         msg.data = self.state
         self.state_publisher.publish(msg)
+
+
     
+def main(args=None):
+    rclpy.init(args=args)
+    
+    jsp = JointStatePublisher()
+
+    rclpy.spin(jsp)
+
+    jsp.destroy_node()
+
+    rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()

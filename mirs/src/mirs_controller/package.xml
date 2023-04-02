@@ -5,11 +5,13 @@
   <version>0.0.1</version>
   <description>MIRS Controller Package</description>
   <maintainer email="chethanputran222@gmail.com">Chethan Putran</maintainer>
-  <license>MIT</license>
+  <license>
+    MIT</license>
 
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
-
+  <depend>mirs_interfaces</depend>
+  <depend>mirs_description</depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

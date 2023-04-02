@@ -17,6 +17,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MotorState.msg"
   "msg/MotorSensorFeedback.msg"
   "msg/RecordingState.msg"
+  "msg/Error.msg"
+  "msg/Trajectory.msg"
  )
 
 

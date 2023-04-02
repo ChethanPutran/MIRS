@@ -1,132 +1,70 @@
-import actionlib_msgs
-import copy
+#import copy
 import math
-import rospy
+import rclpy
+from rclpy.node import Node
+import numpy as np
+# from control_msgs.msg import FollowJointTrajectoryAction
+from trajectory_msgs.msg import JointTrajectoryPoint
+from mirs_controller.trajectory.control.controllers import ArmJointController,EEController
+from mirs_controller.dynamics.dynamics import Dynamics
+from mirs_interfaces.topics.topics import TOPICS
+from mirs_interfaces.msg import Trajectory
 
-from control_msgs.msg import FollowJointTrajectoryAction
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from trajectory.planning.end_effector_planner import EEPlanner
-from trajectory.control.controllers import JointController,EEController
+class TrajectoryFollower(Node):
+    def __init__(self,goal_time_tolerance=[0.05, 0.05, 0.05, 0.05, 0.05, 0.05]):
+        super().__init__('TrajectoryFollower')
+        self.dynamics = Dynamics()
+        self.robot = self.get_parameter("robot").get_parameter_value()
+        self.joints = self.robot.joints 
+        self.Kp = np.zeros((self.robot.DOF),1)
+        self.Kd = np.zeros((self.robot.DOF),1)
+        self.Ki = np.zeros((self.robot.DOF),1)
 
-def trajectory_is_finite(trajectory):
-    """Check if trajectory contains infinite or NaN value."""
-    for point in trajectory.points:
-        for position in point.positions:
-            if math.isinf(position) or math.isnan(position):
+        for idx,joint in enumerate(self.joints):
+            self.Kp[idx]=joint.Kp
+            self.Kd[idx]=joint.Kd
+            self.Ki[idx]=joint.Ki
+            
+        self.joint_goal_tolerances = goal_time_tolerance
+        self.trajectory_subscriber = self.create_subscription(Trajectory,TOPICS.TOPIC_TRAJECTORY,self.follow_and_act)
+
+    def trajectory_is_finite(self,trajectory):
+        """Check if trajectory contains infinite or NaN value."""
+        for point in trajectory.points:
+            for position in point.positions:
+                if math.isinf(position) or math.isnan(position):
+                    return False
+            for velocity in point.velocities:
+                if math.isinf(velocity) or math.isnan(velocity):
+                    return False
+        return True
+
+    def has_velocities(self,trajectory):
+        """Check that velocities are defined for this trajectory."""
+        for point in trajectory.points:
+            if len(point.velocities) != len(point.positions):
                 return False
-        for velocity in point.velocities:
-            if math.isinf(velocity) or math.isnan(velocity):
+        return True
+
+    def within_tolerance(self,a_vec, b_vec, tol_vec):
+        """Check if two vectors are equals with a given tolerance."""
+        for a, b, tol in zip(a_vec, b_vec, tol_vec):
+            if abs(a - b) > tol:
                 return False
-    return True
-
-
-def has_velocities(trajectory):
-    """Check that velocities are defined for this trajectory."""
-    for point in trajectory.points:
-        if len(point.velocities) != len(point.positions):
-            return False
-    return True
-
-
-def reorder_trajectory_joints(trajectory, joint_names):
-    """Reorder the trajectory points according to the order in joint_names."""
-    order = [trajectory.joint_names.index(j) for j in joint_names]
-    new_points = []
-    for point in trajectory.points:
-        new_points.append(JointTrajectoryPoint(
-            positions=[point.positions[i] for i in order],
-            velocities=[point.velocities[i] for i in order] if point.velocities else [],
-            accelerations=[point.accelerations[i] for i in order] if point.accelerations else [],
-            time_from_start=point.time_from_start))
-    trajectory.joint_names = joint_names
-    trajectory.points = new_points
-
-
-def within_tolerance(a_vec, b_vec, tol_vec):
-    """Check if two vectors are equals with a given tolerance."""
-    for a, b, tol in zip(a_vec, b_vec, tol_vec):
-        if abs(a - b) > tol:
-            return False
-    return True
-
-
-def interp_cubic(p0, p1, t_abs):
-    """Perform a cubic interpolation between two trajectory points."""
-    T = (p1.time_from_start - p0.time_from_start).to_sec()
-    t = t_abs - p0.time_from_start.to_sec()
-    q = [0] * 6
-    qdot = [0] * 6
-    qddot = [0] * 6
-    for i in range(len(p0.positions)):
-        a = p0.positions[i]
-        b = p0.velocities[i]
-        c = (-3 * p0.positions[i] + 3 * p1.positions[i] - 2 * T * p0.velocities[i] - T * p1.velocities[i]) / T**2
-        d = (2 * p0.positions[i] - 2 * p1.positions[i] + T * p0.velocities[i] + T * p1.velocities[i]) / T**3
-
-        q[i] = a + b * t + c * t**2 + d * t**3
-        qdot[i] = b + 2 * c * t + 3 * d * t**2
-        qddot[i] = 2 * c + 6 * d * t
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=rospy.Duration(t_abs))
-
-
-def sample_trajectory(trajectory, t):
-    """Return (q, qdot, qddot) for sampling the JointTrajectory at time t,
-       the time t is the time since the trajectory was started."""
-    # First point
-    if t <= 0.0:
-        return copy.deepcopy(trajectory.points[0])
-    # Last point
-    if t >= trajectory.points[-1].time_from_start.to_sec():
-        return copy.deepcopy(trajectory.points[-1])
-    # Finds the (middle) segment containing t
-    i = 0
-    while trajectory.points[i + 1].time_from_start.to_sec() < t:
-        i += 1
-    return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
-
-
-class TrajectoryFollower(object):
-    """Create and handle the action 'follow_joint_trajectory' server."""
-
-    jointNames = [
-        'shoulder_pan_joint',
-        'shoulder_lift_joint',
-        'elbow_joint',
-        'wrist_1_joint',
-        'wrist_2_joint',
-        'wrist_3_joint'
-    ]
-
-    def __init__(self, robot, jointStatePublisher, jointPrefix, nodeName, goal_time_tolerance=None):
-        self.robot = robot
-        self.jointPrefix = jointPrefix
-        self.prefixedJointNames = [s + self.jointPrefix for s in TrajectoryFollower.jointNames]
-        self.jointStatePublisher = jointStatePublisher
-        self.timestep = int(robot.getBasicTimeStep())
-        self.motors = []
-        self.sensors = []
-        for name in TrajectoryFollower.jointNames:
-            self.motors.append(robot.getDevice(name))
-            self.sensors.append(robot.getDevice(name + '_sensor'))
-            self.sensors[-1].enable(self.timestep)
-        self.goal_handle = None
-        self.trajectory = None
-        self.joint_goal_tolerances = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
-        self.server = actionlib.ActionServer(nodeName + "follow_joint_trajectory",
-                                             FollowJointTrajectoryAction,
-                                             self.on_goal, self.on_cancel, auto_start=False)
-
-    def init_trajectory(self):
-        """Initialize a new target trajectory."""
-        state = self.jointStatePublisher.last_joint_states
-        self.trajectory_t0 = self.robot.getTime()
-        self.trajectory = JointTrajectory()
-        self.trajectory.joint_names = self.prefixedJointNames
-        self.trajectory.points = [JointTrajectoryPoint(
-            positions=state.position if state else [0] * 6,
-            velocities=[0] * 6,
-            accelerations=[0] * 6,
-            time_from_start=rospy.Duration(0.0))]
+        return True
+   
+    def reorder_trajectory_joints(self,trajectory, joint_names):
+        """Reorder the trajectory points according to the order in joint_names."""
+        order = [trajectory.joint_names.index(j) for j in joint_names]
+        new_points = []
+        for point in trajectory.points:
+            new_points.append(JointTrajectoryPoint(
+                positions=[point.positions[i] for i in order],
+                velocities=[point.velocities[i] for i in order] if point.velocities else [],
+                accelerations=[point.accelerations[i] for i in order] if point.accelerations else [],
+                time_from_start=point.time_from_start))
+        trajectory.joint_names = joint_names
+        trajectory.points = new_points
 
     def start(self):
         """Initialize and start the action server."""
@@ -207,26 +145,40 @@ class TrajectoryFollower(object):
                     # The arm reached the goal (and isn't moving) => Succeeded
                     self.goal_handle.set_succeeded()
 
-    def follow_and_act(self,robot,trajectory,action,task_object):
+    def follow_and_act(self,msg):
+        self.get_logger().info("Trajectory follower started...")
+        trajectory,action_sequence = msg
         error = None 
         status = True
 
-        ee_planner = EEPlanner()
         ee_controller = EEController()
-        joint_controllers = [joint.controller for joint in robot.JOINTS]
-        action_sequence = ee_planner.get_action_sequence(action,task_object,trajectory.time_length)
+        arm_controller = ArmJointController(self.joints,self.publish_motor_state,self.Kp,self.Kd,self.Ki)
 
         try:
-            for point,time_stamp in zip(trajectory.points,trajectory.times):
-                
-                # Move joints with joint controller
-                for joint_controller,theta in zip(joint_controllers,point):
-                    joint_controller.forward(*theta)
+            for point,time_stamp in zip(trajectory.get_trajectory_points(),trajectory.get_trajectory_times()):
+                theta,theta_dot,theta_dotdot = point
 
-                # Perform action
-                ee_controller.forward(action_sequence[time_stamp])
+                # Move joints with joint controller
+                arm_res = arm_controller.forward(theta,theta_dot,theta_dotdot)
+                ee_res = ee_controller.forward(action_sequence[time_stamp])
+
+                if (not arm_res) or (not ee_res):
+                    raise Exception("Could not move to point")
             
         except Exception as e:
             error = "Error in following trajectory"  + str(e)
             status = False
         return status,error
+
+    
+def main(args):
+    rclpy.init(args=args)
+    
+    tf = TrajectoryFollower()
+
+    rclpy.spin(tf)
+
+    tf.destroy_node()
+
+    rclpy.shutdown()
+

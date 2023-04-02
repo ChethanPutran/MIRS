@@ -218,6 +218,17 @@ class Camera:
     def __init__(self, size=100):
         self.camera = 0
         self.size = size
+        self.recognition_object = {
+            'id':0, 
+            'position' : [],
+            'orientation': [4],
+            'size' : [2],
+            'position_on_image':[],
+            'size_on_image':[],
+            'number_of_colors':0,
+            'colors':[],
+            'model' : ''
+            }
 
     def cannyImage(self, image):
         # 1.Conveting coloured image to grayscale image

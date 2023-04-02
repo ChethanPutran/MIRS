@@ -1,29 +1,33 @@
 #!/usr/bin/env python3
 import time
+import numpy as np
 import rclpy
 from rclpy.node import Node
-import cv2
-from dynamics.dynamics import Dynamics
-from kinematics.kinematics import Kinematics
-from trajectory.planning.trajectory_planner import TrajectoryPlanner
-from trajectory.control.robot_state_publisher import RobotStatePublisher
-from trajectory.control.trajectory_follower import TrajectoryFollower
-from common.config import MODES,INPUT_EVENTS,JOINT_NAMES,JOINT_SENSOR_NAMES,JOINTS,JOINT_TYPE
-from devices.motor import Motor
-from devices.camera import Camera
-from devices.sensors import JointSensor
-from mirs_interfaces.msg import JointState
-from trajectory.control.controllers import JointController
+from .kinematics.kinematics import Kinematics
+from .trajectory.planning.trajectory_planner import TrajectoryPlanner
+from .common.config import MODES,INPUT_EVENTS,JOINT_NAMES,JOINT_TYPE
+from .devices.camera import Camera
+from mirs_interfaces.msg import JointState,Error,RobotState,Trajectory
+from .transformations.matrices import Matrices
+from .trajectory.planning.end_effector_planner import EEPlanner
+from mirs_interfaces.topics.topics import TOPICS
 
 class Joint:
-    def __init__(self,joint_name,Kp=1,Kd=1,Ki=1,joint_type=JOINT_TYPE['REVOLUTE']) -> None:
-        self.motor = Motor('MOTOR_'+joint_name,JOINTS[joint_name])
-        self.controller = JointController(joint_name,self.motor,Kp,Kd,Ki)
-        self.type = joint_type
+    def __init__(self,joint_name,Kp=1,Kd=1,Ki=1,joint_type=JOINT_TYPE['REVOLUTE']):
         self.name = joint_name
+        self.type = joint_type
+        self.Kp  = Kp
+        self.Kd = Kd
+        self.Ki = Ki
+        self.state = [0,0]
         
     def get_name(self):
         return self.name
+    def get_state(self):
+        return self.name
+    def set_state(self,theta,theta_dot):
+        self.state[0] = theta
+        self.state[1] = theta_dot
 
 class EndEffector:
     def __init__(self,joint_velocity=2):
@@ -35,12 +39,15 @@ class EndEffector:
         for joint_name in JOINT_NAMES[7:]:
             self.JOINTS.append(Joint(joint_name))
         
-        for joint in self.JOINTS:
-            joint.set_velocity(joint_velocity)
+        # for joint in self.JOINTS:
+        #     joint.set_velocity(joint_velocity)
+    
 
 class Robot(Node):   
-    def __init__(self,event_handler,time_step=0.5):
-        super().__init__("MIRS")
+    def __init__(self,time_step=0.5):
+        super().__init__("MIRS_ROBOT")
+        self.get_logger().info("Creating mirs robot node...")
+        self.DOF = 6
         self.MODES = MODES
         self.INPUT_EVENTS = INPUT_EVENTS
         self.TIME_STEP = 0.1  # in sec
@@ -48,75 +55,65 @@ class Robot(Node):
         self.EXECUTION_STATUS = None
         self.TIME_STEP = time_step  # in s
         self.SLEEP_TIME = 0.1  # in s
+        self.theta = np.zeros((1,6))
+        self.theta_dot = np.zeros((1,6))
+        self.time = time.time()
         self.STATE = {
             "Position": [0,0,0],
-            "Velocity":[0,0,0,0,0,0],
+            "Velocity": [0,0,0],
+            "Pose": []
         }
-        self.LINKS = []
         self.kinematics = Kinematics()
-        self.dynamics = Dynamics()
         self.trajectory_planner = TrajectoryPlanner()
-        self.trajectory_follower = TrajectoryFollower()
-        self.DEVICES = {}
+        self.ee_planner = EEPlanner() 
         self.JOINTS = []
-        self.JOINT_SENSORS = []
-        self.event_handler = event_handler
-
-        # Add end-effector
+        self.create_subscription(JointState,TOPICS.TOPIC_JOINT_STATE,self.update_state,1)
+        self.robot_state_publisher = self.create_publisher(RobotState,TOPICS.TOPIC_ROBOT_STATE,1)
+        self.error_publisher = self.create_publisher(Error,TOPICS.TOPIC_ERROR,1)
+        self.trajectory_publisher = self.create_publisher(Trajectory,TOPICS.TOPIC_TRAJECTORY,1)
+        self.matrices = Matrices
         self.EE = EndEffector()
-
-        # Add camera
         self.CAMERA = Camera()
         
-        # Initilaize joint motors
         for joint_name in JOINT_NAMES[:7]:
             self.JOINTS.append(Joint(joint_name))
 
-        # Initilaize joint sensors
-        for sensor_name in JOINT_SENSOR_NAMES:
-            self.JOINT_SENSORS.append(JointSensor(name=sensor_name))
-
-        self.create_subscription("/joint_state",JointState,self.update_state)
-        self.robot_state_publisher = RobotStatePublisher()
-    
+    """ Subscription to joint states from Joint State Publisher"""
     def update_state(self,state):
-        self.matrices.update(state.data.theta1,
-                             state.data.theta2,
-                             state.data.theta3,
-                             state.data.theta4,
-                             state.data.theta5,
-                             state.data.theta6,
-                             )
+        self.time = time.time()
+        self.theta[:,:] = [state.theta]
 
-    def set_velocity(self,velocity= 20 ):
-        """
-        velocity in mm/s
-        """
-        # Set velocity
-        for joint in self.JOINTS:
-            joint.set_velocity(velocity)
+        # Update pose
+        self.matrices.update(*state.theta)
+        self.theta_dot[:,:] = state.theta_dot
+
+        # Update joint state
+        for idx,joint in enumerate(self.JOINTS):
+            joint.set_state(self.theta[idx],self.theta_dot[idx])
+
 
     def shut_down(self):
         self.event_handler.publish("shurdown")
     
     def execute(self,task_queue):
-        Robot.EXECUTION_STATUS = True
-        Robot.EXECUTION_ERROR = None
+        self.EXECUTION_STATUS = True
+        self.EXECUTION_ERROR = None
         
-        while (len(task_queue) > 0 ):
+        while (not task_queue.is_over()):
             cur_task = task_queue.pop()
             sucess, error = self.perform(cur_task)
             if not sucess:
                 print(error)
                 if not sucess:
-                    Robot.EXECUTION_STATUS = False
-                    Robot.EXECUTION_ERROR = error
-                    return Robot.EXECUTION_STATUS, Robot.EXECUTION_ERROR
+                    self.EXECUTION_STATUS = False
+                    self.EXECUTION_ERROR = error
+                    self.report_error(self.EXECUTION_ERROR)
+                    return self.EXECUTION_STATUS
             else:
                 print('.', end='')
                 #time.sleep(Robot.SLEEP_TIME)
 
-        return Robot.EXECUTION_STATUS, Robot.EXECUTION_ERROR
+        return self.EXECUTION_STATUS
     
     def perform(self,task):
         start_point = task.start_position
@@ -146,10 +143,23 @@ class Robot(Node):
                                                   initial_acceleration,
                                                   final_acceleration
                                                   )
-        # Follow trajectory and perform action
-        status, error = self.trajectory_follower.follow_and_act(self,trajectory,action,task_object)
+        
+        self.pulish_trajectory()
+        
+        action_sequence = self.ee_planner.get_action_sequence(action,task_object,trajectory.time_length)
 
-        return status, error
+        msg = Trajectory()
+        msg.action_seqence = action_sequence
+        msg.trajectory = trajectory
+
+        # Follow trajectory and perform action
+
+        self.trajectory_publisher.publish(msg)
+
+        # Wait for the response 
+        # if sucessfull:
+        #     return True
+        # return False
 
     def get_time(self):
         return self.time
@@ -158,8 +168,23 @@ class Robot(Node):
         return self.STATE
     
     def set_state(self):
-        self.STATE['Position'] = [joint_sensor.get_position() for joint_sensor in self.JOINT_SENSORS]
-        self.STATE['Velocity'] = [joint_sensor.get_velocity() for joint_sensor in self.JOINT_SENSORS]
+        self.STATE['Pose'] = self.matrices.get_ee_pose()
+        self.STATE['Position'] = self.kinematics.forward(self.theta)
+        self.STATE['Velocity'] = self.kinematics.compute_ee_velocity(self.theta_dot)
     
-   
+    def report_error(self,error):
+        self.error_publisher.publish(error)
+
+def main(args=None):
+    rclpy.init(args=args)
     
+    robot = Robot()
+
+    rclpy.spin(robot)
+
+    robot.destroy_node()
+
+    rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()

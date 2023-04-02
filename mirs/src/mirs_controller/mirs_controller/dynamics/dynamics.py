@@ -1,6 +1,8 @@
 import numpy as np
 #import roboticstoolbox as rtb
 from  mirs_controller.transformations.matrices import Matrices
+
+
 class Dynamics:
     def init(self,urdf_file,n_joints=6,gx=0,gy=0,gz=-9.81):
         self.matrices = Matrices()
@@ -139,7 +141,7 @@ class Dynamics:
 
         """
         for p in range(max(i,j,k),self.n_joints+1):
-            self.__D_ijk[i][p] += 
+            self.__D_ijk[i][p] += 0
         
     def T_i(self,i,q,q_dot,q_dotdot):
         """
