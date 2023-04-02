@@ -1,5 +1,5 @@
 import numpy as np
-import roboticstoolbox as rtb
+#import roboticstoolbox as rtb
 from  mirs_controller.transformations.matrices import Matrices
 class Dynamics:
     def init(self,urdf_file,n_joints=6,gx=0,gy=0,gz=-9.81):
