@@ -1,9 +1,0 @@
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/uninstall.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/mirs_description_uninstall.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/test.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/edit_cache.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/rebuild_cache.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/list_install_components.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/install.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/install/local.dir
-/home/chethan/Desktop/MajorProject/mirs/build/mirs_description/CMakeFiles/install/strip.dir
