@@ -1,8 +1,8 @@
 import numpy as np
 import roboticstoolbox as rtb
-from transformations.matrices import Matrices
+from  mirs_controller.transformations.matrices import Matrices
 class Dynamics:
-    def init(self,urdf_file,n_joints=6):
+    def init(self,urdf_file,n_joints=6,gx=0,gy=0,gz=-9.81):
         self.matrices = Matrices()
         self.__I = {
             "I1" : [],
@@ -20,32 +20,173 @@ class Dynamics:
             "m5" : 0,
             "m6" : 0,
         }
-        self.__Xbar = {
-            "X1_bar" : (0,0,0),
-            "X2_bar" : (0,0,0),
-            "X3_bar" : (0,0,0),
-            "X4_bar" : (0,0,0),
-            "X5_bar" : (0,0,0),
-            "X6_bar" : (0,0,0),
+        self.__cg = {
+            "cg1" : (0,0,0),
+            "cg2" : (0,0,0),
+            "cg3" : (0,0,0),
+            "cg4" : (0,0,0),
+            "cg5" : (0,0,0),
+            "cg6" : (0,0,0),
         }
-        self.read_inertia_mats(urdf_file)
+        # self.read_inertia_mats(urdf_file)
         self.n_joints = n_joints
+        self.__D_i = np.zeros((self.n_joints,1))
+        self.__D_ij = np.zeros(self.n_joints)
+        self.__D_ijk = np.zeros((self.n_joints,1))
+        self.__U_ij= np.zeros((self.n_joints,1))
+        self.__U_ijk= np.zeros((self.n_joints,1))
+        self.__J_i =  np.zeros((n_joints,4,4))
+        self.__g_T = [gx,gy,gz,0]
+        self.__T_i = np.zeros((self.n_joints,1))
 
-        C = []  # Coriolis & centrifugal force vector
-        G = [0, 0, -9.8]  # Gravity force vector
+        # puma = rtb.models.DH.Puma560()
+        # tau = puma.rne(puma.qn, np.zeros((6,)), np.zeros((6,)))
+        # print(tau)
+
+    def Compute_P_i(self,r_i,i):
+        """ 
+            -> Returns position of 'i' th link w.r.to base frame\n
+            -> r_i - Location of any point on 'i' th link
+                w.r.to reference frame in the 'i' th link
+        """
+        return np.dot(self.matrices.HomogenousTM(0,i),r_i)
+    
+    def Compute_U_ij(self,i,j):
+        """
+            Returns del(0_T_i)/del(q_j)
+        """
+        assert j<=i , "j should be less than or equal to i"
+
+        del_T_by_del_q = np.dot(self.matrices.HomogenousTM(0,j),
+                                self.D(),
+                                self.matrices.HomogenousTM(j,i))
+
+        return del_T_by_del_q
+    
+    def Compute_U_ij(self,i,j,k=None):
+        """
+            Returns del(del(0_T_i)/del(q_j))/del(q_k)
+        """
+        assert j<=i and  k<=i, "j & k should be less than or equal to i"
+
+        p = j  # min
+        q = k  # max
+
+        if(k and j>k):
+            # If k is less than l
+            p = k
+            q = j
         
-        self.tau = np.zeros((self.n_joints,1))
-        self._M = np.zeros(self.n_joints)
-        self._C = np.zeros((self.n_joints,1))
-        self._G = np.zeros((self.n_joints,1))
+        del_T_by_del_q = np.dot(self.matrices.HomogenousTM(0,p),
+                            self.D(),
+                            self.matrices.HomogenousTM(p,q),
+                            self.D(),
+                            self.matrices.HomogenousTM(q,i))
+
+        return del_T_by_del_q
+    
+    
+    def Compute_J_i(self,i):
+        """
+            Return inertia tensor of ith link
+            integ(r_i*r_i_T*dm_i)
+        
+        """
+        Ixx = self.__I[f"I{i}"][0]
+        Iyy = self.__I[f"I{i}"][0]
+        Izz = self.__I[f"I{i}"][0]
+        Ixy = self.__I[f"I{i}"][0]
+        Iyz = self.__I[f"I{i}"][0]
+        Ixz = self.__I[f"I{i}"][0]
+        m   = self.__m[f"m{i}"]
+        x_bar,y_bar,z_bar =self.__cg[f"cg{i}"]
+
+        J_i = [[0.5*(-Ixx+Iyy+Izz),     Ixy ,             Ixz,        m*x_bar],
+             [    Ixy,          0.5*(Ixx-Iyy+Izz),      Iyz,        m*y_bar],
+             [    Ixz,                Iyz,       0.5*(Ixx+Iyy-Izz), m*z_bar],
+             [   m*x_bar,           m*y_bar,          m*z_bar,         1   ]
+             ]
+        
+        return J_i
+    
+    def Compute_D_i(self,i):
+        pass
+
+    def Compute_D_ij(self,i,j):
+        """
+         It calculates the inertia term
+
+        """
+        sum_ = 0
+
+        for p in range(max(i,j),self.n_joints+1):
+
+            # U_pj
+            U = self.U_ijk(p,j)
+
+            # Jp
+            J = self.J_i(p)
+
+            # U_pi_T
+            U_T = self.U_ijk(p,i).T
+
+            sum_ += np.trace(np.dot(U,J,U_T))
+        return sum_
+
+    def Compute_D_ijk(self,i,j,k):
+        """
+         It calculates the centrifugal & coriolis term
+
+        """
+        for p in range(max(i,j,k),self.n_joints+1):
+            self.__D_ijk[i][p] += 
+        
+    def T_i(self,i,q,q_dot,q_dotdot):
+        """
+            Calculates the 'i' th joint torque required
+        
+        """
+
+        D_i = []
+        D_ij = []
+        D_ijk = []
+        # Inertia matrix
+        M = [self.D_ij(i,j) for j in range(1,self.n_joints+1)]
+
+        A = np.dot(D_ij[i],q_dotdot)
+        B = np.dot((np.dot(D_ijk,q_dot).T),q_dot)
+        C = D_i[i]
+        
+        T = A + B + C
+
+    def del_T_by_del_q_i(self,i):
+        o_T_i_1= self.matrices.HomogenousTM(0,i-1)
+        i_1_T_n = self.matrices.HomogenousTM(i-1,self.n_joints)
+        D = self.D(type='revolute')
+
+        del_T_by_del_q = np.dot(o_T_i_1,D,i_1_T_n)
+
+        # or 
+        np.dot(self.matrices.HomogenousTM(0,i),self.T_D(self.matrices.HomogenousTM(i-1,i)))
+
+        return del_T_by_del_q
+
+    
+
+    def del_0_T_j_by_del_t(self,j,theta_dot):
+        # delT/delq = J
+        J = []
+
+        del_T_by_del_t = np.dot(J.T,theta_dot)
+
+        return del_T_by_del_t
 
 
+    """
+    Returns d((i-1)_T_i)/d(q_i) : D
 
-
-        puma = rtb.models.DH.Puma560()
-        tau = puma.rne(puma.qn, np.zeros((6,)), np.zeros((6,)))
-        print(tau)
-
+    """
+   
     def T_D(self,T,delta):
         """
         Returns the differential transformation of 'i' th frame
@@ -86,7 +227,7 @@ class Dynamics:
         return t_D
         
         
-    def D(self,change=0,type='revolute'):
+    def D(self,type='revolute'):
         """
         Returns the differential transformation of point in 'i' th frame
         w.r.to 'i' th frame due to change 'i' ith joint variable
@@ -130,110 +271,6 @@ class Dynamics:
         for j in range(1,self.n_joints+1):
             sum+=self.Dij(j)*theta_dotdot[j]
 
-    def Dij(self,i,j):
-        sum = 0
-
-        U = []
-        J = []
-        U_T = []
-        for p in (max(i,j),self.n_joints+1):
-            sum += np.trace(np.matmul(np.matmul(U[p,j],J[p]),U_T[p,i]))
-
-
-    def P_j(self,r_j,j):
-        """ 
-            Returns position of jth link w.r.to base frame
-            r_j - Location of any point on jth link
-                w.r.to reference frame in the jth link
-        """
-        return np.matmul(self.matrices.HomogenousTM(0,j),r_j) 
-    
-
-    def del_0_T_j_by_del_t(self,j,theta_dot):
-        # delT/delq = J
-        J = []
-
-        del_T_by_del_t = np.dot(J.T,theta_dot)
-
-        return del_T_by_del_t
-
-
-    """
-    Returns d((i-1)_T_i)/d(q_i) : D
-
-    """
-    def del_T_by_del_q_i(self,i):
-        o_T_i_1= self.matrices.HomogenousTM(0,i-1)
-        i_1_T_n = self.matrices.HomogenousTM(i-1,self.n_joints)
-        D = self.D(type='revolute')
-
-        del_T_by_del_q = np.dot(o_T_i_1,D,i_1_T_n)
-
-        # or 
-        np.dot(self.matrices.HomogenousTM(0,i),self.T_D(self.matrices.HomogenousTM(i-1,i)))
-
-        return del_T_by_del_q
-
-    
-    def del_0_T_j_by_del_q_k(self,j,k):
-        """
-            Returns del(0_T_j)/del(q_k)
-
-        """
-        del_T_by_del_q = self.matrices.HomogenousTM(0,)
-
-        # Rotation vector
-        K = [0,0,0]
-        Kx,Ky,Kz = K
-
-        delta_theta = 0.1
-        delta_x = 0.1
-        delta_y= 0.1
-        delta_z= 0.1
-
-        delta_theta_x = Kx*delta_theta
-        delta_theta_y = Ky*delta_theta
-        delta_theta_z = Kz*delta_theta
-
-
-        # For small changes
-        D = [
-                [       0       , -delta_theta_z ,  delta_theta_y , delta_x],
-                [ delta_theta_z ,        0       , -delta_theta_x , delta_y],
-                [-delta_theta_y , -delta_theta_x ,       0        , delta_z],
-                [       0       ,        0       ,       0        ,    0   ],
-            ]
-       
-
-
-
-
-        Uj_k = []
-
-    def J(self,i):
-        """
-            Return inertia tensor of ith link
-            integ(r_i*r_i_T*dm_i)
-        
-        """
-        Ixx = self.__I[f"I{i}"][0]
-        Iyy = self.__I[f"I{i}"][0]
-        Izz = self.__I[f"I{i}"][0]
-        Ixy = self.__I[f"I{i}"][0]
-        Iyz = self.__I[f"I{i}"][0]
-        Ixz = self.__I[f"I{i}"][0]
-        m = self.__m[f"m{i}"]
-        x_bar,y_bar,z_bar =self.__Xbar[f"X{i}_bar"]
-
-        J_i = [[0.5*(-Ixx+Iyy+Izz),     Ixy ,             Ixz,        m*x_bar],
-             [    Ixy,          0.5*(Ixx-Iyy+Izz),      Iyz,        m*y_bar],
-             [    Ixz,                Iyz,       0.5*(Ixx+Iyy-Izz), m*z_bar],
-             [   m*x_bar,           m*y_bar,          m*z_bar,         1   ]
-             ]
-        
-        return J_i
-        
-  
     def C(self,theta,theta_dot):
         pass
     def G(self,theta):
