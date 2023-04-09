@@ -1,0 +1,3 @@
+string EXECUTION_STATUS
+string EXECUTION_ERROR
+string[] TASKS

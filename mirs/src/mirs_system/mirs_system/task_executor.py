@@ -1,54 +1,96 @@
 #! /usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from topics import TOPICS
+from mirs_interfaces.topics.topics import TOPICS
+from mirs_interfaces.topics.services import SERVICES
+from mirs_interfaces.msg import ExecutorState
+from mirs_interfaces.srv import ExecTask
 
-class TaskExecutor(Node):
+
+class TaskExecutorStatus:
+    INACTIVE='status_inactive'
+    EXECUTING='status_executing'
+    WAITING='status_waiting'
+    EXECUTED='status_executed'
+    FAILURE='status_failure'
+
+class TaskExecutorAsync(Node):
     def __init__(self,time_period = 1):
         super().__init__('TaskExecutor')
         self.tasks = []
         self.TIME_PERIOD = time_period
-        self.state = "INACTIVE"
-        self.task = None
-        self.timer = self.create_timer(1,self.extract)
-        self.create_subscription(String,TOPICS.TOPIC_START_TASK,self.execute)
-        self.task_executor_status_publisher = self.create_publisher(String,TOPICS.TOPIC_EXECUTOR_STATUS,1)
-        self.timer = self.create_timer(self.TIME_PERIOD,self.get_executor_status)
-        
-    def get_executor_status(self):
-        self.get_logger().info('Task status :'+self.state)
-        msg = String()
-        msg.data = self.state
+        self.state = {
+            "status":TaskExecutorStatus.INACTIVE,
+            "error":None,
+            "finished":False
+        }
+        self.task_feedback_success = True
+        self.future = None
+
+        # Task executor service
+        self.execute_task_client = self.create_client(ExecTask,SERVICES.SERVICE_EXECUTE_TASK)
+
+        self.timer = self.create_timer(self.TIME_PERIOD,self.publish_executor_status)
+
+        # Start task 
+        self.create_subscription(String,TOPICS.TOPIC_START_TASK,self.execute_tasks)
+
+        # task executor status publisher
+        self.task_executor_status_publisher = self.create_publisher(ExecutorState,TOPICS.TOPIC_EXECUTOR_STATUS,1)
+
+        self.state = TaskExecutorStatus.WAITING
+        while not self.execute_task_client.wait_for_service(timeout_sec=1):
+            self.get_logger().info("Task executor service not available! Waiting...")
+
+    
+    def publish_executor_status(self):
+        self.get_logger().info('Task status :' + self.state['status'])
+        msg = ExecutorState()
+
+        msg.status = self.state['status']
+        msg.error = self.state['error']
+        msg.finished = self.state['finished']
+
         self.task_executor_status_publisher.publish(msg)
 
-    def execute(self,task):
-        self.get_logger().info('Task obtained :'+task)
-        #extract task
-        success = False
-        self.state = "EXECUTING"
-        count = 0
-        while count < 50:
-            count+=1
+    def set_state(self,status,error=None,finished=False):
+        self.state['status'] = status
+        self.state['error'] = error
+        self.state['finished'] = finished
 
-        #if successfull
-        if success:
-            self.state = "EXECUTED"
+    def execute_tasks(self,msg):
+        tasks = msg.tasks
+        self.get_logger().info('Task obtained')
 
-        #if failure
-        else:
-            self.state = "FAILURE"
+        self.set_state(TaskExecutorStatus.EXECUTING) 
+    
+        req = ExecTask.Request()
+        req.TASKS = tasks
+        self.future = self.execute_task_client.call_async(req)
+
 
 
 def main(args=None):
     rclpy.init(args)
 
-    task_extractor_node = TaskExecutor()
+    task_extractor_node = TaskExecutorAsync()
 
-    rclpy.spin(task_extractor_node)
+    while rclpy.ok():
+        rclpy.spin_once(task_extractor_node)
 
-
+        if(task_extractor_node.future and task_extractor_node.future.done()):
+            try:
+                res = task_extractor_node.future.result()
+                if res.error:
+                    raise (res.error)
+            except Exception as e:
+                task_extractor_node.set_state(TaskExecutorStatus.FAILURE,error=str(e))
+            else:
+                task_extractor_node.set_state(TaskExecutorStatus.EXECUTED,finished=True)
+            break
+        
+    task_extractor_node.destroy_node()
     rclpy.shutdown()
 
 if __name__ == "__main__":

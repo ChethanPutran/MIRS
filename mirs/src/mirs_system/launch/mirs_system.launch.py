@@ -12,12 +12,18 @@ def generate_launch_description():
     
 
     #Importing launch file from different package
-    robot = IncludeLaunchDescription(PythonLaunchDescriptionSource([
-        os.path.join(mirs_controller_pkg,'launch','/mirs_controller.launch.py')
-    ]))
+    # robot = IncludeLaunchDescription(PythonLaunchDescriptionSource([
+    #     os.path.join(mirs_controller_pkg,'launch','/mirs_controller.launch.py')
+    # ]))
 
 
-    recorder = Node(
+    system = Node(
+        package="mirs_system",
+        executable="sysetm",
+        name="mirs_system"
+        )
+    
+    task_recorder = Node(
         package="mirs_system",
         executable="task_recorder",
         name="mirs_task_recorder"
@@ -38,7 +44,7 @@ def generate_launch_description():
     
 
     return LaunchDescription([
-        robot,recorder,task_extractor,task_executor
+        system,task_recorder,task_extractor,task_executor
     ])
     
     

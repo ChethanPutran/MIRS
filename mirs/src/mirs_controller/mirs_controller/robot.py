@@ -11,6 +11,8 @@ from mirs_interfaces.msg import JointState,Error,RobotState,Trajectory
 from .transformations.matrices import Matrices
 from .trajectory.planning.end_effector_planner import EEPlanner
 from mirs_interfaces.topics.topics import TOPICS
+from mirs_interfaces.topics.services import SERVICES
+from mirs_interfaces.srv import ExecTask
 
 class Joint:
     def __init__(self,joint_name,Kp=1,Kd=1,Ki=1,joint_type=JOINT_TYPE['REVOLUTE']):
@@ -63,6 +65,7 @@ class Robot(Node):
             "Velocity": [0,0,0],
             "Pose": []
         }
+        self.execute_task_srv = self.create_service(ExecTask,SERVICES.SERVICE_EXECUTE_TASK,self.execute_tasks_callback)
         self.kinematics = Kinematics()
         self.trajectory_planner = TrajectoryPlanner()
         self.ee_planner = EEPlanner() 
@@ -77,6 +80,7 @@ class Robot(Node):
         
         for joint_name in JOINT_NAMES[:7]:
             self.JOINTS.append(Joint(joint_name))
+
 
     """ Subscription to joint states from Joint State Publisher"""
     def update_state(self,state):
@@ -95,9 +99,11 @@ class Robot(Node):
     def shut_down(self):
         self.event_handler.publish("shurdown")
     
-    def execute(self,task_queue):
-        self.EXECUTION_STATUS = True
-        self.EXECUTION_ERROR = None
+    def execute_tasks_callback(self,req,res):
+        task_queue = req.TASKS
+
+        res.EXECUTION_STATUS = True
+        res.EXECUTION_ERROR = None
         
         while (not task_queue.is_over()):
             cur_task = task_queue.pop()
@@ -105,17 +111,37 @@ class Robot(Node):
             if not sucess:
                 print(error)
                 if not sucess:
-                    self.EXECUTION_STATUS = False
-                    self.EXECUTION_ERROR = error
-                    self.report_error(self.EXECUTION_ERROR)
-                    return self.EXECUTION_STATUS
+                    res.EXECUTION_STATUS = False
+                    res.EXECUTION_ERROR = error
+                    return res
             else:
                 print('.', end='')
                 #time.sleep(Robot.SLEEP_TIME)
 
-        return self.EXECUTION_STATUS
+        return res
     
     def perform(self,task):
+           for task in tasks:
+            msg = Task()
+            msg.object = task.object
+            msg.action = task.action
+            msg.theta = task.theta
+            msg.theta_dot = task.theta_dot
+
+            # Create service
+            self.task_publisher.publish(msg)
+
+            # Wait for the response
+            sucess,msg = self.get_task_feedback()
+
+            # continue with next task if sucess
+            if sucess:
+                task_exec.append((task.id,task.action))
+                continue
+            else:
+                self.set_state(TaskExecutorStatus.FAILURE)
+                return
+        self.state = TaskExecutorStatus.EXECUTED
         start_point = task.start_position
         end_point = task.end_position
         task_object = task.object

@@ -19,6 +19,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/RecordingState.msg"
   "msg/Error.msg"
   "msg/Trajectory.msg"
+  "msg/VoiceState.msg"
+  "msg/SystemState.msg"
+  "msg/CameraState.msg"
+  "srv/ExecTask.srv"
  )
 
 

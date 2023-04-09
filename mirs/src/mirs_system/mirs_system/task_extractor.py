@@ -3,47 +3,65 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from topics import TOPICS
+from mirs_interfaces.topics.topics import TOPICS
+from mirs_interfaces.topics.services import SERVICES
+from mirs_interfaces.srv import TaskExtractionStatus 
+from .ai.task.extractor import Extractor
+
+class TaskExtractorState:
+    INACTIVE = 'inactive'
+    EXTRACTED = 'extracted'
+    EXTRACTING = 'extracting'
+    FAILURE = 'failure'
 
 class TaskExtractor(Node):
     def __init__(self,time_period = 1):
         super().__init__('TaskExtractor')
         self.tasks = []
         self.TIME_PERIOD = time_period
-        self.state = "INACTIVE"
-        self.task = None
-        self.timer = self.create_timer(1,self.extract)
-        self.create_subscription(String,TOPICS.TOPIC_START_TASK_EXTRACTION,self.extract)
-        self.task_extraction_status_publisher = self.create_publisher(String,TOPICS.TOPIC_EXTRACTOR_STATUS,1)
-        self.timer = self.create_timer(self.TIME_PERIOD,self.get_extractor_status)
-        
-    def get_extractor_status(self):
-        self.get_logger().info('Task status :'+self.state)
-        msg = String()
-        msg.data = self.state
+        self.state = {
+            'status':'',
+            'tasks':[],
+            'error':None
+        }
+        self.task_extractor = Extractor()
+
+        self.create_subscription(String,TOPICS.TOPIC_START_TASK_EXTRACTION,self.extract_tasks)
+        self.task_extraction_status_publisher = self.create_publisher(TaskExtractionStatus,TOPICS.TOPIC_EXTRACTOR_STATUS,1)
+        self.timer = self.create_timer(self.TIME_PERIOD,self.publish_extractor_status)
+    
+    def set_state(self,status,tasks=[],error=None):
+        self.state['status'] = status
+        self.state['tasks'] = tasks
+        self.state['error'] = error
+
+    def get_state(self):
+        return self.state
+
+    def publish_extractor_status(self):
+        self.get_logger().info('Task status :'+self.state['status'])
+        msg = TaskExtractionStatus()
+        msg.status = self.state['status']
+        msg.tasks = self.state['tasks']
+        msg.error = self.state['error']
         self.task_extraction_status_publisher.publish(msg)
 
-    def extract(self,recording):
-        #extract task
-        success = False
-        self.state = "EXTRACTING"
-        count = 0
-        while count < 50:
-            count+=1
+    def extract_tasks(self,msg):
+        recording  = msg.recording
+
+        self.set_state(TaskExtractorState.EXTRACTING)
+
+        success, task_queue, error = self.task_extractor.extract(recording)
 
         #if successfull
         if success:
-            self.state = "EXTRACTED"
+            self.set_state(TaskExtractorState.EXTRACTED,task_queue)
+            self.tasks = task_queue
 
         #if failure
         else:
-            self.state = "FAILURE"
+            self.set_state(TaskExtractorState.FAILURE,error=error)
 
-    def get_task(self):
-        if self.state == "EXTRACTED":
-            self.state = "INACTIVE"
-            return self.task
-        return None
 
 def main(args=None):
     rclpy.init(args)
@@ -51,7 +69,6 @@ def main(args=None):
     task_extractor_node = TaskExtractor()
 
     rclpy.spin(task_extractor_node)
-
 
     rclpy.shutdown()
 
