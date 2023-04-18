@@ -70,7 +70,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     # Create node
-    recorder_node = Recorder()
+    recorder_node = TaskRecorder()
 
     # Run continuosly
     rclpy.spin(recorder_node)

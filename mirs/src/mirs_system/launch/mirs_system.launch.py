@@ -8,7 +8,7 @@ import os
 
 # All launch file should have following function
 def generate_launch_description():
-    mirs_controller_pkg = get_package_share_directory('mirs_controller')
+    #mirs_controller_pkg = get_package_share_directory('mirs_controller')
     
 
     #Importing launch file from different package
@@ -19,32 +19,40 @@ def generate_launch_description():
 
     system = Node(
         package="mirs_system",
-        executable="sysetm",
-        name="mirs_system"
+        executable="system",
+        name="system"
         )
     
-    task_recorder = Node(
+    voice = Node(
         package="mirs_system",
-        executable="task_recorder",
-        name="mirs_task_recorder"
+        executable="voice",
+        name="mirs_voice"
         )
+    
+    # task_recorder = Node(
+    #     package="mirs_system",
+    #     executable="task_recorder",
+    #     name="task_recorder"
+    #     )
     
 
-    task_extractor = Node(
-        package="mirs_system",
-        executable="task_extractor",
-        name="mirs_task_extractor"
-        )
+    # task_extractor = Node(
+    #     package="mirs_system",
+    #     executable="task_extractor",
+    #     name="task_extractor"
+    #     )
     
-    task_executor = Node(
-        package="mirs_system",
-        executable="task_executor",
-        name="mirs_task_executor"
-        )
-    
+    # task_executor = Node(
+    #     package="mirs_system",
+    #     executable="task_executor",
+    #     name="task_executor"
+    #     )
 
     return LaunchDescription([
-        system,task_recorder,task_extractor,task_executor
+        system
     ])
+    # return LaunchDescription([
+    #     system,task_recorder,task_extractor,task_executor
+    # ])
     
     
