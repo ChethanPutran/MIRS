@@ -113,3 +113,15 @@ Gazebo - a robot environment simulator
 > Install Moveit
 > sudo apt install ros-humble-moveit
 > Examples : ros2 launch moveit2_tutorials demo.launch.py rviz_config:=panda_moveit_config_demo_empty.rviz
+
+
+
+
+
+
+
+
+
+
+
+### Connecting to remote machine / raspberry pi
