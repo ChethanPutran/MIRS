@@ -40,13 +40,14 @@ JOINTS = {
     'FINGER_3_JOINT_3':15,
 }
 
-JOINT_SENSOR_NAMES = [
-    'SHOULDER_JOINT_1_SENSOR',
-                    'SHOULDER_JOINT_2_SENSOR',
-                    'ELBOW_JOINT_SENSOR',
-                    'WRIST_JOINT_1_SENSOR',
-                    'WRIST_JOINT_2_SENSOR',
-                    'WRIST_JOINT_3_SENSOR']
+JOINT_SENSOR_NAMES = {
+    'SHOULDER_JOINT_1_SENSOR':0,
+    'SHOULDER_JOINT_2_SENSOR':1,
+    'ELBOW_JOINT_SENSOR':2,
+    'WRIST_JOINT_1_SENSOR':3,
+    'WRIST_JOINT_2_SENSOR':4,
+    'WRIST_JOINT_3_SENSOR':5
+}
      
 NODES = [
   'NO_NODE',
