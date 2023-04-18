@@ -115,5 +115,9 @@ Gazebo - a robot environment simulator
 
 ### 6D pose Estimation Models
 
-> https://github.com/liuyuan-pal/Gen6D > https://github.com/zubair-irshad/CenterSnap
-> https://analyticsindiamag.com/guide-to-6d-object-pose-estimation-using-posecnn/
+> https://github.com/liuyuan-pal/Gen6D > https://github.com/zubair-irshad/CenterSnap > https://analyticsindiamag.com/guide-to-6d-object-pose-estimation-using-posecnn/
+
+#### Block diagrams and flowchart creator
+
+> Microsoft Visio
+> Textografo
