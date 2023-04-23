@@ -113,6 +113,9 @@ Gazebo - a robot environment simulator
 > sudo apt install ros-humble-moveit
 > Examples : ros2 launch moveit2_tutorials demo.launch.py rviz_config:=panda_moveit_config_demo_empty.rviz
 
+
+### Connecting to remote machine / raspberry pi
+=======
 ### 6D pose Estimation Models
 
 > https://github.com/liuyuan-pal/Gen6D > https://github.com/zubair-irshad/CenterSnap > https://analyticsindiamag.com/guide-to-6d-object-pose-estimation-using-posecnn/

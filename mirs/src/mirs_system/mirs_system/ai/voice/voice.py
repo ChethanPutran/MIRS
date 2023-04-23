@@ -4,7 +4,7 @@ import speech_recognition as sr
 import pyttsx3 as ts
 import os
 from  mirs_interfaces.msg import VoiceState,SytemState
-from  mirs_interfaces.topics.topics import TOPICS
+from  mirs_system.conf.topics import TOPICS
 import rclpy
 from rclpy.node import Node
 
@@ -81,11 +81,11 @@ class Voice(Node):
 
 
 def main(args=None):
-    rclpy.init(args)
+    rclpy.init(args=args)
 
-    system = Voice()
+    voice = Voice()
 
-    rclpy.spin(system)
+    rclpy.spin(voice)
 
     rclpy.shutdown()
 

@@ -1,10 +1,11 @@
 import rclpy
-from rclpy.node import Node
-from  mirs_interfaces.msg import VoiceState,SytemState,ExecutorState,RecorderState,ExtractorState
-from  mirs_interfaces.topics.topics import TOPICS
-from  mirs_interfaces.topics.commands import COMMANDS
+from  rclpy.node import Node
+from  mirs_interfaces.msg import VoiceState,SystemState,TaskExecutorState,TaskRecorderState,TaskExtractorState
+from  .conf.topics import TOPICS
+from  .conf.commands import COMMANDS
+import time
 
-class SystemState:
+class State:
     RECORDING = "state_recording" 
     RECORDED = "state_recorded" 
     EXECUTING = "state_executing" 
@@ -31,12 +32,12 @@ class System(Node):
             "error":None,
             "tasks":None
         }
-        self.executor = {
+        self.sys_executor = {
             "status":None,
             "error":None,
             "recording":None
         }
-        self.state = {
+        self.sys_state = {
             "status":None,
             "error":None,
             "message":None,
@@ -44,23 +45,23 @@ class System(Node):
             "recording":None,
         }
         
-        self.cmd = None
+        self.cmd = ''
         self.publishing_period = 1
 
-        self.task_recorder_listener = self.create_subscription(TOPICS.TOPIC_RECORDING,RecorderState,self.recorder_callback)
-        self.task_extractor_listener = self.create_subscription(TOPICS.TOPIC_EXTRACTOR_STATUS,ExtractorState,self.extractor_callback)
-        self.task_executor_listener = self.create_subscription(TOPICS.TOPIC_EXECUTOR_STATUS,ExecutorState,self.executor_callback)
-        self.voice_listener = self.create_subscription(TOPICS.TOPIC_VOICE_STATE,VoiceState,self.set_cmd)
+        self.create_subscription(TaskRecorderState,TOPICS.TOPIC_RECORDING,self.recorder_callback,1)
+        self.create_subscription(TaskExtractorState,TOPICS.TOPIC_EXTRACTOR_STATUS,self.extractor_callback,1)
+        self.create_subscription(TaskExecutorState,TOPICS.TOPIC_EXECUTOR_STATUS,self.executor_callback,1)
+        self.create_subscription(VoiceState,TOPICS.TOPIC_VOICE_STATE,self.set_cmd,1)
        
-        self.system_state_publisher = self.create_publisher(TOPICS.TOPIC_SYSTEM_STATE,SytemState,1)
+        self.system_state_publisher = self.create_publisher(SystemState,TOPICS.TOPIC_SYSTEM_STATE,1)
         self.timer = self.create_timer(self.publishing_period,self.publish_system_state)
         self.start()
 
     def recorder_callback(self,msg):
         self.get_logger().info("Recorder callback :" + msg.status)
-        self.recording['status'] = msg.status
-        self.recording['recording'] = msg.recording 
-        self.recording['error'] = msg.error
+        self.recorder['status'] = msg.status
+        self.recorder['recording'] = msg.recording 
+        self.recorder['error'] = msg.error
 
     def extractor_callback(self,msg):
         self.get_logger().info("Extractor callback :" + msg.status)
@@ -70,16 +71,16 @@ class System(Node):
       
     def executor_callback(self,msg):
         self.get_logger().info("Executor callback :" + msg.status)
-        self.extractor['status'] = msg.status
-        self.extractor['finished'] = msg.finished 
-        self.extractor['error'] = msg.error
+        self.sys_executor['status'] = msg.status
+        self.sys_executor['finished'] = msg.finished 
+        self.sys_executor['error'] = msg.error
 
     def publish_system_state(self):
         self.get_logger().info("Publishing sys state :" + self.state['status'])
-        msg = SytemState()
-        msg.status = self.state['status']
-        msg.message = self.state['message']
-        msg.error = self.state['error']
+        msg = SystemState()
+        msg.status = self.sys_state['status']
+        msg.message = self.sys_state['message']
+        msg.error = self.sys_state['error']
 
         self.system_state_publisher.publish(msg)
 
@@ -87,17 +88,17 @@ class System(Node):
         self.cmd = msg.cmd
 
     def get_state(self):
-        return self.state
+        return self.sys_state
     
     def set_state(self,status,recording=None,command=None,error=None,message=None):
-        self.state['status'] = status
-        self.state['message'] = error
-        self.state['error'] = message
-        self.state['recording'] = recording
-        self.state['command'] = command
+        self.sys_state['status'] = status
+        self.sys_state['message'] = error
+        self.sys_state['error'] = message
+        self.sys_state['recording'] = recording
+        self.sys_state['command'] = command
     
     def get_status(self):
-        return self.state['status']
+        return self.sys_state['status']
     
     def get_cmd(self):
         return self.cmd
@@ -106,13 +107,15 @@ class System(Node):
         return not(self.recorder['recording'] == None)
     
     def exists_tasks(self):
-        return not(self.executor['tasks'] == None)
+        return not(self.sys_executor['tasks'] == None)
     
     def get_recoding(self):
         return self.recorder['recording']
     
     def start(self):
         while not (self.get_cmd() == 'exit'):
+            self.get_logger().info("Waiting for command...")
+            time.sleep(1)
             cmd = self.get_cmd() 
             # cmd = input("Enter your command : ")
             self.get_logger().info("Command : "+cmd)
@@ -121,54 +124,54 @@ class System(Node):
 
             st = self.get_status()
 
-            if((st == SystemState.RECORDING) or \
-                (st == SystemState.PROCESSING) or \
-                (st == SystemState.EXECUTING)) :
+            if((st == State.RECORDING) or \
+                (st == State.PROCESSING) or \
+                (st == State.EXECUTING)) :
                 msg = f"Can not execute command '{cmd}'. System currently {st} the task."
-                self.set_state(SystemState.WARNING,command=COMMANDS.SPEAK,message=msg)
+                self.set_state(State.WARNING,command=COMMANDS.SPEAK,message=msg)
                 continue
             
             if cmd == 'record':
                 print("Recording...")
-                self.set_state(SystemState.RECORDING,command=COMMANDS.START_RECORD)
+                self.set_state(State.RECORDING,command=COMMANDS.START_RECORD)
             elif (cmd == 'process'):
 
                 if self.exists_recoding():
-                    self.set_state(SystemState.PROCESSING,command=COMMANDS.START_PROCESSING,recording=self.get_recoding())
+                    self.set_state(State.PROCESSING,command=COMMANDS.START_PROCESSING,recording=self.get_recoding())
                 else:
                     msg = "No recording exists. Please record the taks first!"
-                    self.set_state(SystemState.WARNING,command=COMMANDS.SPEAK,message=msg)
+                    self.set_state(State.WARNING,command=COMMANDS.SPEAK,message=msg)
             elif cmd == 'execute':
                 if self.exists_tasks():
-                    self.set_state(SystemState.EXECUTING)
+                    self.set_state(State.EXECUTING)
                 else:
                     if(self.exists_recoding()):
                         msg = "No tasks to execute. Please process the recording first!"
                     else:
                         msg = "No tasks to execute. Please record the taks first!"
-                    self.set_state(SystemState.WARNING,command=COMMANDS.SPEAK,message=msg)
+                    self.set_state(State.WARNING,command=COMMANDS.SPEAK,message=msg)
 
                 #Event.fire(Event.EVENT_EXECUTE_TASK)
                 print("Executing...")
                 # self.execute()
                 sucess, error = self.robot.execute(self.tasks)
                 if (not sucess):
-                    self.set_state(SystemState.ERROR,error)
+                    self.set_state(State.ERROR,error)
                     print("Error : ",error)
-                self.set_state(SystemState.EXECUTED)
+                self.set_state(State.EXECUTED)
                 print("Task completed sucessfully :)")
             elif cmd == 'exit':
-                self.set_state(SystemState.STOP)
+                self.set_state(State.STOP)
                 print("Exiting...")
                 break
             else:
-                self.set_state(SystemState.ERROR,command=COMMANDS.SPEAK,message="No command found! Try again")
+                self.set_state(State.ERROR,command=COMMANDS.SPEAK,message="No command found! Try again")
 
         print("Exiting... Bye...")
-        self.set_state(SystemState.WARNING,command=COMMANDS.SPEAK, message="Exiting...")
+        self.set_state(State.WARNING,command=COMMANDS.SPEAK, message="Exiting...")
 
 def main(args=None):
-    rclpy.init(args)
+    rclpy.init(args=args)
 
     system = System()
 

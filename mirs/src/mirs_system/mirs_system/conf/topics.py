@@ -18,12 +18,11 @@ class TOPICS:
 
     ### Task Recorder
     TOPIC_TASK_RECORDED = "topic_task_recorded"
-    TOPIC_RECORDING = 'topic_recording'
-
+    TOPIC_RECORDING = "topic_recording"
     ### Task Executor
     TOPIC_EXECUTOR_STATUS = "topic_executor_status"
     TOPIC_START_TASK = "topic_start_task"
-    TOPIC_NEW_TASK = "topic_new_task"
+    TOPIC_TASK = "topic_task"
     TOPIC_TASK_FEEDBACK = "topic_task_feedback"
 
     ### Robot Controller
