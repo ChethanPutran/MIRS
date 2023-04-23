@@ -1,5 +1,5 @@
 string status
 string error
-string message
+string messagex
 string recording
 string command

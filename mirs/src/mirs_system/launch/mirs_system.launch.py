@@ -17,11 +17,11 @@ def generate_launch_description():
     # ]))
 
 
-    system = Node(
-        package="mirs_system",
-        executable="system",
-        name="system"
-        )
+    # system = Node(
+    #     package="mirs_system",
+    #     executable="system",
+    #     name="system"
+    #     )
     
     voice = Node(
         package="mirs_system",
@@ -49,7 +49,7 @@ def generate_launch_description():
     #     )
 
     return LaunchDescription([
-        system
+        voice
     ])
     # return LaunchDescription([
     #     system,task_recorder,task_extractor,task_executor
