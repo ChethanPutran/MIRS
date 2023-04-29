@@ -9,34 +9,22 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
 
+find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CameraState.msg"
-  "msg/Error.msg"
-  "msg/JointState.msg"
-  "msg/MotorSensorFeedback.msg"
-  "msg/MotorState.msg"
-  "msg/RobotState.msg"
-  "msg/SystemState.msg"
-  "msg/Task.msg"
-  "msg/TaskExecutorState.msg"
-  "msg/TaskExtractorState.msg"
-  "msg/TaskRecorderState.msg"
-  "msg/Theta.msg"
-  "msg/Trajectory.msg"
-  "msg/VoiceState.msg"
-
   DEPENDENCIES geometry_msgs std_msgs
   
  )
+
  
-install(DIRECTORY topics
+
+install(DIRECTORY devices
   DESTINATION lib/${PROJECT_NAME}
 )
 
 
 #"srv/ExecTask.srv"
-ament_export_dependencies(rosidl_default_runtime)
+#ament_export_dependencies(rosidl_default_runtime)
 
 ament_package()

@@ -1,0 +1,17 @@
+{
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.autopep8"
+	},
+	"python.formatting.provider": "none",
+	"ros.distro": "foxy",
+	"python.autoComplete.extraPaths": [
+		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_test\\Lib\\site-packages",
+		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
+		"C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages"
+	],
+	"python.analysis.extraPaths": [
+		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_test\\Lib\\site-packages",
+		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
+		"C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages"
+	]
+}

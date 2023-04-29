@@ -249,5 +249,14 @@ class CoordinateEstimator:
             depths.append(self.depth_map[waypoint])
 
         return depths
+    
+    def process(self):
+        pass
+    
     def get_point_depth(self,image_1,image_r,point):
         return self.depth_map[point]
+    
+    def get_3Dpoint_depth(self,image_1,image_r,point):
+        self.process(image_1,image_r)
+        x,y,z = point[0],point[1],self.depth_map[point]
+        return (x,y,z) 
