@@ -4,7 +4,7 @@ import numpy as np
 import os
 from matplotlib.image import imread
 import matplotlib.pyplot as plt
-from vision.models.yolov7 import labels,yolov7
+from .models.yolov7 import labels,yolov7
 
 
 class ObjectIdentifier:
@@ -139,3 +139,26 @@ class ObjectIdentifier:
         crop =  frame[y:h,x:w]
         return crop
 
+def main():
+    from mirs_system.ai.vision.calibration.raspberrypi import Raspberrypi
+
+    test_folder = os.path.join(os.path.dirname(__file__),'test')
+
+    obj = ObjectIdentifier()
+
+    rasp = Raspberrypi()
+    files,err = rasp.get_sample_image(test_folder)
+
+
+    if err:
+        print(err)
+        return
+    
+    left_img = files[0]
+    right_img = files[1]
+
+    print(obj.identify_object(left_img))
+
+
+if __name__ == "__main__":
+    main()

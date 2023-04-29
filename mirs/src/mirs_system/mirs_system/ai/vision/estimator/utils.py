@@ -66,10 +66,3 @@ def write_keypoints_to_disk(filename, kpts):
         fout.write('\n')
     fout.close()
 
-if __name__ == '__main__':
-
-    # For left cam
-    P2 = get_projection_matrix(0)
-
-    # For right cam
-    P1 = get_projection_matrix(1)

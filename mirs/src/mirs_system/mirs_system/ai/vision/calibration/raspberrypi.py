@@ -3,7 +3,7 @@ import paramiko
 from scp import SCPClient
 
 
-dest_folder = os.path.join(os.path.dirname(__file__),"stereo")
+DEST_FOLDER= os.path.join(os.path.dirname(__file__),"stereo")
 
 class Raspberrypi:
     def __init__(self,host="raspberrypi.local",user="cheth",password="root"):
@@ -11,12 +11,17 @@ class Raspberrypi:
         self.connect(host,user,password)
 
     def connect(self,host,user,passwd):
-        self.client = paramiko.SSHClient()
-        self.client.load_system_host_keys()
-        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.client.connect(host, username=user, password=passwd)
-        self.scp = SCPClient(self.client.get_transport())
-        self.connected = True
+        try:
+            print("Connecting to raspberrypi...")
+            self.client = paramiko.SSHClient()
+            self.client.load_system_host_keys()
+            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.client.connect(host, username=user, password=passwd)
+            self.scp = SCPClient(self.client.get_transport())
+            print("Connected to raspberrypi.")
+            self.connected = True
+        except Exception as e:
+            print("Failed to connect to raspberry pi! Error :",e)
 
     def execute(self,command):
         if self.connected:
@@ -29,10 +34,10 @@ class Raspberrypi:
         self.client.close()
         self.connected = False
 
-    def get_file(self,file_name):
+    def get_file(self,file_name,dest_folder):
         print("Recieving...")
         try:
-            self.scp.get(file_name,dest_folder)
+            self.scp.get(file_name,dest_folder=DEST_FOLDER)
             print("Sucessfull.")
             return os.path.join(dest_folder,file_name)
         except Exception as e:
@@ -55,6 +60,28 @@ class Raspberrypi:
 
         if out.channel.recv_exit_status() == 0:
             calib_r_file = self.get_file(fname_r)
+        else:
+            return [],err.readlines()
+        
+        return (calib_l_file,calib_r_file,),None
+    
+    def get_sample_image(self,folder,width=640,height=480):
+        fname_l = "sample_image_l.jpg"
+        fname_r = "sample_image_r.jpg"
+
+        cmd = f"libcamera-jpeg -o {fname_l} --camera 0 --width={width} --height={height}"
+        out,err = self.execute(cmd)
+
+        if out.channel.recv_exit_status() == 0:
+            calib_l_file = self.get_file(fname_l,folder)
+        else:
+            return [],err.readlines()
+        
+        cmd = f"libcamera-jpeg -o {fname_r} --camera 1 --width={width} --height={height}"
+        out,err = self.execute(cmd)
+
+        if out.channel.recv_exit_status() == 0:
+            calib_r_file = self.get_file(fname_r,folder)
         else:
             return [],err.readlines()
         

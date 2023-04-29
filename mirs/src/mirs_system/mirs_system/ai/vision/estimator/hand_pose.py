@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 import mediapipe as mp
 import numpy as np
-from .utils import DLT, get_projection_matrix, write_keypoints_to_disk
+from utils import DLT, get_projection_matrix, write_keypoints_to_disk
 
 
 class HandPose:

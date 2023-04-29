@@ -1,4 +1,4 @@
-from vision.models.action_identifier import model
+from models.action_identifier import model
 
 
 class ActionIdentifier:

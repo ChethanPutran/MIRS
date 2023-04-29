@@ -1,11 +1,15 @@
 import os
+import sys
+# sys.path.append('./') 
+
+
 import cv2
 import numpy as np
 from io import BytesIO
 from PIL import Image
 import torch
-from models.experimental import attempt_load
-from utils.general import non_max_suppression
+from .models.experimental import attempt_load
+from .utils.general import non_max_suppression
 
 class Model():
     def __init__(self):

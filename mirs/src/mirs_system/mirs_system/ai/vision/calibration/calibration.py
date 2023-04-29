@@ -3,9 +3,8 @@ import cv2
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
-import time
-import csv
 from raspberrypi import Raspberrypi
+import time
 
 CALIBRATION_IMAGES = "stereo"  
 CALIBRATION_RESULTS = os.path.join("stereo","results")
@@ -68,7 +67,7 @@ def get_2D_image_points(image):
             # on the image window
             font = cv2.FONT_HERSHEY_SIMPLEX
             cv2.circle(resized_img,(x,y),3,(0, 255, 0),5)
-            cv2.imshow('image', resized_img)
+            plt.imshow(resized_img)
 
         # checking for right mouse clicks	
         if event==cv2.EVENT_RBUTTONDOWN:
@@ -87,12 +86,12 @@ def get_2D_image_points(image):
                         str(g) + ',' + str(r),
                         (x,y), font, 1,
                         (255, 255, 0), 2)
-            cv2.imshow('img', resized_img)
+            plt.imshow(resized_img)
 
     resize_width = 820
     resized_img,aspect_ratio = ResizeWithAspectRatio(image, width=resize_width) # Resize by width 
 
-    cv2.imshow('image', resized_img)
+    plt.imshow( resized_img)
 
     # setting mouse handler for the image
     # and calling the click_event() function
@@ -107,15 +106,26 @@ def get_2D_image_points(image):
     return points
 
 class Calibration:
+    WIDTH = 640
+    HEIGHT = 480
+    focal_length = 2.6  # in mm
+    baseline = 60   # in mm
+    u0 = 2
+    v0 = 1
+    FOV_H = 73
+    FOV_V = 50
+    FOV_d = 83
+    aperture = 2.4
+    resolution = ( 3280 , 2464 )
+    camera_left = 0
+    camera_right = 1
 
-    camera_mat_left = os.path.join(dir_path,"camera_parameters","camera_left.csv")
-    camera_mat_right = os.path.join(dir_path,"camera_parameters","camera_right.csv")
-    fields = ['camera_matrix','distorsion_params','rotation_matrix','translational_vector']
+    camera_mat_left = os.path.join(dir_path,"camera_parameters","camera_left.npz")
+    camera_mat_right = os.path.join(dir_path,"camera_parameters","camera_right.npz")
 
     def __init__(self):
         self.chess_board_size = (5,5)
-        self.WIDTH = 640
-        self.HEIGHT = 480
+        
 
         # stop the iteration when specified
         # accuracy, epsilon, is reached or
@@ -128,74 +138,70 @@ class Calibration:
         self.translational_vector = []
         self.n_points = 61
         
-
     def calibrate(self,images_path,fname):
+        # Define the dimensions of checkerboard
+        CHECKERBOARD = (7,7)
+
+        # stop the iteration when specified
+        # accuracy, epsilon, is reached or
+        # specified number of iterations are completed.
+        criteria = (cv2.TERM_CRITERIA_EPS +
+                    cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
         # Vector for 3D points
-        points_3D = []
+        threedpoints = []
 
         # Vector for 2D points
-        points_2D = []
-
+        twodpoints = []
 
         # 3D points real world coordinates
-        objectp3d = np.zeros((1, self.chess_board_size[0]* self.chess_board_size[1],3), np.float32)
-        objectp3d[0, :, :2] = np.mgrid[0:self.chess_board_size[0],0:self.chess_board_size[1]].T.reshape(-1, 2)
+        objectp3d = np.zeros((1, CHECKERBOARD[0]
+                            * CHECKERBOARD[1],
+                            3), np.float32)
+        objectp3d[0, :, :2] = np.mgrid[0:CHECKERBOARD[0],
+                                    0:CHECKERBOARD[1]].T.reshape(-1, 2)
 
-    
-        # Extracting path of individual image stored
-        # in a given directory. Since no path is
-        # specified, it will take current directory
-        # jpg files alone
-
-        print("Extracting 2D points ...")
-        image = []
-        for img_name in images_path:
-            image = cv2.imread(img_name)
+        for filename in images_path:
+            image = cv2.imread(filename)
+            h, w = image.shape[:2]
             grayColor = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             # Find the chess board corners
             # If desired number of corners are
             # found in the image then ret = true
             ret, corners = cv2.findChessboardCorners(
-                            grayColor, self.chess_board_size,
+                            grayColor, CHECKERBOARD,
                             cv2.CALIB_CB_ADAPTIVE_THRESH
                             + cv2.CALIB_CB_FAST_CHECK +
                             cv2.CALIB_CB_NORMALIZE_IMAGE)
-            #ret, corners = cv2.findChessboardCorners(grayColor, self.chess_board_size,flags=cv2.CALIB_USE_INTRINSIC_GUESS)
 
             # If desired number of corners can be detected then,
             # refine the pixel coordinates and display
             # them on the images of checker board
-            
             if ret == True:
-                points_3D.append(objectp3d)
+                threedpoints.append(objectp3d)
 
                 # Refining pixel coordinates
                 # for given 2d points.
                 corners2 = cv2.cornerSubPix(
-                    grayColor, corners, (11, 11), (-1, -1), self.criteria)
-            
+                    grayColor, corners, (11, 11), (-1, -1), criteria)
 
-                points_2D.append(corners2)
+                twodpoints.append(corners2)
 
-                img = cv2.drawChessboardCorners(image, (7,6), corners2,ret)
-                cv2.imwrite(os.path.join(dir_path,CALIBRATION_RESULTS,f"{str(int(time.time()))}.jpg"),img)
+                # Draw and display the corners
+                image = cv2.drawChessboardCorners(image,
+                                                CHECKERBOARD,
+                                                corners2, ret)
+                cv2.imwrite(os.path.join(dir_path,CALIBRATION_RESULTS,f"{str(int(time.time()))}.jpg"),image)
 
+            cv2.imshow('img', image)
+            cv2.waitKey(0)
 
-                cv2.imshow("Raw image",ResizeWithAspectRatio(image)[0])
-                cv2.imshow("Processes image",ResizeWithAspectRatio(image)[0])
+        cv2.destroyAllWindows()
 
+        ret, camera_matrix, distortion, rot_matrix, t_vector = cv2.calibrateCamera(
+            threedpoints, twodpoints, grayColor.shape[::-1], None, None)
         
-        # Perform camera calibration by
-        # passing the value of above found out 3D points (threedpoints)
-        # and its corresponding pixel coordinates of the
-        # detected corners (twodpoints)
-
-        if len(points_2D) <= 0:
-            print("No 2D points able to find. Retake images!")
-            return False
-        ret, camera_matrix, distortion, rot_matrix, t_vector = cv2.calibrateCamera(points_3D, points_2D, (self.WIDTH,self.HEIGHT), None, None)
-
         self.save_camera_params(fname,camera_matrix=camera_matrix,
                  distorsion_params=distortion,
                  rotation_matrix=rot_matrix,
@@ -229,46 +235,23 @@ class Calibration:
     @staticmethod
     def load_camera_params(right_cam=False):
         """ Default left camera params"""
-
         
         if not right_cam:
-            with open(Calibration.camera_mat_left, 'r') as file:
-                reader = csv.DictReader(
-                file, fieldnames=Calibration.fields)
-
-            row = next(reader)
-
-            camera_matrix = row['camera_matrix']
-            distortion = row['distorsion_params']
-            rot_matrix = row['rotation_matrix']
-            t_vector = row['translational_vector']
+            data = np.load(Calibration.camera_mat_left)
+            camera_matrix,distortion,rot_matrix,t_vector = data['camera_matrix'],data['distorsion_params'],data['rotation_matrix'],data['translational_vector']
 
         else:
-            with open(Calibration.camera_mat_right, 'r') as file:
-                reader = csv.DictReader(
-                file, fieldnames=Calibration.fields)
-
-            row = next(reader)
-            camera_matrix = row['camera_matrix']
-            distortion = row['distorsion_params']
-            rot_matrix = row['rotation_matrix']
-            t_vector = row['translational_vector']
+            data = np.load(Calibration.camera_mat_left)
+            camera_matrix,distortion,rot_matrix,t_vector = data['camera_matrix'],data['distorsion_params'],data['rotation_matrix'],data['translational_vector']
 
         return camera_matrix, distortion, rot_matrix, t_vector 
     
     def save_camera_params(self,fname,camera_matrix,distorsion_params,rotation_matrix,translational_vector):
         print("Saving camera params...")
-        cam_parms = {
-            "camera_matrix":camera_matrix,
-            "distorsion_params":distorsion_params,
-            "rotation_matrix":rotation_matrix,
-            "translational_vector":translational_vector,
-        }
-        with open(fname, 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames = Calibration.fields)
-            writer.writeheader()
-            writer.writerow(cam_parms)
-
+        np.savez(fname,camera_matrix=camera_matrix,
+                 distorsion_params=distorsion_params,
+                 rotation_matrix=rotation_matrix,
+                 translational_vector=translational_vector)
         print("Saved.")
 
     def stereo_calibrate(self,get_new_images = False):
@@ -281,7 +264,7 @@ class Calibration:
         else:
             print("Calibrating with new images...")
             rasp = Raspberrypi()
-            files,err = rasp.get_calibration_images(self.WIDTH,self.HEIGHT)
+            files,err = rasp.get_calibration_images(Calibration.WIDTH,Calibration.HEIGHT)
 
             if not err:
                 left_imgs_path =  [files[0],]
@@ -298,13 +281,6 @@ class Calibration:
             print("Stereo calibration sucessful.")
         else:
             print("Stereo calibration failed!")
-        
-        # wait for a key to be pressed to exit
-        print("Press any key to exit.")
-        cv2.waitKey(0)
-
-        # close the window
-        cv2.destroyAllWindows()
     
     def undistort(self,img):
         img = cv2.imread("/images/1.png")
@@ -315,4 +291,5 @@ class Calibration:
 
 if __name__ == "__main__":
     cc = Calibration()
-    cc.stereo_calibrate()
+    #cc.stereo_calibrate(False)
+    print(cc.load_camera_params())

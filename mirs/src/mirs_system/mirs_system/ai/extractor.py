@@ -1,6 +1,7 @@
+import os
 import cv2
 import numpy as np
-from .task import Task
+from ai.task.task import Task
 from ai.vision.estimator.action_identifier import ActionIdentifier
 from ai.vision.estimator.object_identifier import ObjectIdentifier
 from ai.vision.estimator.object_pose import PoseEstimator
@@ -117,3 +118,28 @@ class Extractor:
         video_right.release()
 
         return (True, self.task_queue, None)
+
+
+
+
+def main():
+    from .vision.calibration.raspberrypi import Raspberrypi
+
+    te = Extractor()
+
+    test_folder = os.path.dirname(__file__)
+
+    rasp = Raspberrypi()
+    files,err = rasp.get_sample_video(test_folder)
+
+
+    if err:
+        print(err)
+        return
+    
+    print(te.extract(files))
+
+print(__name__)
+
+if __name__ == "__main__":
+    main()

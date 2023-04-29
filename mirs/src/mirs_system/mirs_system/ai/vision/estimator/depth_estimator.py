@@ -2,32 +2,22 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 from matplotlib import patches
-from vision.calibration.calibration import Calibration
+from mirs_system.ai.vision.calibration.calibration import Calibration
 
 DISTANCE = 10
-WIDTH = 2
 
-# PROJECTION_MAT_LEFT = [[640.,     0.,   640.,  2176.],
-#                        [0.,     480.,   480.,   552.],
-#                        [0.,       0.,     1.,    1.4]]
-# PROJECTION_MAT_RIGHT = [[640.,     0.,   640.,  2176.],
-#                         [0.,     480.,   480.,   792.],
-#                         [0.,       0.,     1.,    1.4]]
+WIDTH = Calibration.WIDTH
+HEIGHT = Calibration.HEIGHT
 
-PROJECTION_MAT_LEFT = Calibration.load_camera_params()
-PROJECTION_MAT_RIGHT = Calibration.load_camera_params(right_cam=True)
+
+K_left,dist_l,R_left,t_left = Calibration.load_camera_params()
+K_right,dist_r,R_right,t_right= Calibration.load_camera_params(right_cam=True)
 
 class CoordinateEstimator:
     def __init__(self, num_disparities=6*16,
                  block_size=11,
                  min_disparity=0,
-                 window_size=6,
-                 projection_mat_left=PROJECTION_MAT_LEFT,
-                 projection_mat_right=PROJECTION_MAT_RIGHT,
-                 ):
-        self.projection_mat_left = projection_mat_left
-
-        self.projection_mat_right = projection_mat_right
+                 window_size=6):
 
         self.num_disparities = num_disparities
         self.block_size = block_size
@@ -53,10 +43,10 @@ class CoordinateEstimator:
         disparity_map = self.compute_disparity_map(img_l, img_r)
 
         # Step 2. Decompose projection matrix
-        K_left, R_left, t_left = self.decompose_projection_mat(
-            self.projection_mat_left)
-        *_, t_right = self.decompose_projection_mat(
-            self.projection_mat_right)
+        # K_left, R_left, t_left = self.decompose_projection_mat(
+        #     self.projection_mat_left)
+        # *_, t_right = self.decompose_projection_mat(
+        #     self.projection_mat_right)
 
         # Step 3. Calculate depth map
         self.depth_map = self.compute_depth_map(
@@ -83,7 +73,7 @@ class CoordinateEstimator:
 
         return disparity_map
 
-    def compute_depth_map(self, disparity_map, K, t_left, t_right):
+    def compute_depth_map(self, disparity_map, K, t_left, t_right,use_default=True):
         """
         1. Get the focal length  𝑓 from the  𝐾 matrix
         2. Compute the baseline  𝑏 using corresponding values from the translation vectors  𝑡
@@ -93,11 +83,15 @@ class CoordinateEstimator:
         Z = fb/d
 
         """
-        # Get the focal length from the K matrix
-        f = K[0, 0]
+        if not use_default:
+            # Get the focal length from the K matrix
+            f = K[0, 0]
 
-        # Get the distance between the cameras from the t matrices (baseline)
-        b = t_left[1] - t_right[1]
+            # Get the distance between the cameras from the t matrices (baseline)
+            b = t_left[1] - t_right[1] 
+        else:
+            f = Calibration.focal_length
+            b = Calibration.baseline
 
         # Replace all instances of 0 and -1 disparity with a small minimum value (to avoid div by 0 or negatives)
         disparity_map[disparity_map == 0] = 0.1
