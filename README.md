@@ -124,3 +124,86 @@ Gazebo - a robot environment simulator
 
 > Microsoft Visio
 > Textografo
+
+
+
+### Raspberry Pi installations
+#### About os flash and user creation
+https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/
+
+
+#### Depth sensing camera
+https://www.waveshare.com/cm4-dual-camera-base.html
+https://www.waveshare.com/wiki/CM4-DUAL-CAMERA-BASE
+
+
+#### About FLash
+https://www.pcguide.com/raspberry-pi/how-to/set-up-compute-module-4-cm4/
+https://linuxhint.com/use-laptop-as-monitor-raspberry-pi/
+
+#### Enabling USB
+dtoverlay=dwc2,dr_mode=host
+
+#### Enabling HBMI to VGI
+hdmi_force_hotplug=1
+hdmi_drive=2
+
+#### Raspberry connection to HDMI display
+https://linuxhint.com/connect-raspberry-pi-monitor/#:~:text=Simply%20connect%20the%20HDMI%20cable,of%20HDMI%20to%20VGA%20adapter.
+
+
+#### Connecting to laptop
+https://linuxhint.com/connect-raspberry-pi-laptop/
+https://beebom.com/how-use-windows-laptop-as-monitor-raspberry-pi/
+
+
+#### Connecting to wifi
+> systemctl start NetworkManager
+> systemctl enable NetworkManager
+> nmcli device wifi list
+> sudo nmcli --ask dev wifi connect <SSID>
+
+- Download Angry IP Scanner:
+http://angryip.org/download/#windows
+
+- Download Putty:
+http://www.putty.org/
+
+- Download VNC-Viewer:
+https://www.realvnc.com/download/viewer/
+
+
+#### Using depth sensing cameras
+
+#### Test camera in Bullseye image
+> sudo libcamera-vid -t 0 -cs 0
+> sudo libcamera-vid -t 0 -cs 1
+
+#### Check if the camera is detected
+> libcamera-hello --list-cameras
+
+#### Test camera in Bullseye image
+> sudo libcamera-vid -t 0 --camera 0
+> sudo libcamera-vid -t 0 --camera 1
+
+
+#### Opening the corresponding camera
+> libcamera-hello --camera 1
+> libcamera-hello --camera 0
+
+#### Taking Pictures
+> libcamera-jpeg -o test-left.jpg --camera 0
+> libcamera-jpeg -o test-right.jpg --camera 1
+
+#### Getting image to host
+> scp cheth@raspberrypi.local:test-left.jpg .
+> libcamera-jpeg -o test-right.jpg --camera 1 --width=640 --height=640
+> sudo libcamera-vid -t 5000 -cs 0 -o t-l.h264 --width 640 --height 640
+
+
+#### Connecting to wifi through command line
+> sudo ifconfig wlan0 up
+> nmcli dev wifi list
+or
+> sudo iw wlan0 scan | grep SSID
+> sudo nmcli --ask dev wifi connect <SSID>

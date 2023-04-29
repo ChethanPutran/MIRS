@@ -7,20 +7,6 @@ from vision.calibration.calibration import Calibration
 DISTANCE = 10
 WIDTH = 2
 
-# classes = ["mobile", "mouse"]
-
-# yolo_net = cv2.dnn.readNet("yolov4-tiny.weights", "yolov4-tiny.cfg")
-
-# model = cv2.dnn_DetectionModel(yolo_net)
-# model.setInputParams(size=(416, 416), scale=1/255, swapRB=True)
-
-# cap = cv2.VideoCapture(3)
-
-# while True:
-#     status, frame = cap.read()
-
-#     img = frame
-
 # PROJECTION_MAT_LEFT = [[640.,     0.,   640.,  2176.],
 #                        [0.,     480.,   480.,   552.],
 #                        [0.,       0.,     1.,    1.4]]
