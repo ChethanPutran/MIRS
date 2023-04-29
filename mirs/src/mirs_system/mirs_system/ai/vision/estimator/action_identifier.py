@@ -1,4 +1,4 @@
-from models.action_identifier import model
+from ai.vision.estimator.models.action_identifier import model
 
 
 class ActionIdentifier:

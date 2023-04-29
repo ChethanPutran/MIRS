@@ -3,7 +3,6 @@ import time
 import os
 import numpy as np
 import mediapipe as mp
-import tensorflow as tf
 import math
 import matplotlib.pyplot as plt
 

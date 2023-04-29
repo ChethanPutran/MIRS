@@ -34,66 +34,66 @@ class Raspberrypi:
         self.client.close()
         self.connected = False
 
-    def get_file(self,file_name,dest_folder):
+    def get_file(self,file_name,dest_folder=DEST_FOLDER):
         print("Recieving...")
         try:
-            self.scp.get(file_name,dest_folder=DEST_FOLDER)
+            self.scp.get(file_name,local_path=dest_folder)
             print("Sucessfull.")
-            return os.path.join(dest_folder,file_name)
+            return (os.path.join(dest_folder,file_name),None,)
         except Exception as e:
-            print(e)
+            return (None,e,)
+
+    def get_stereo_images(self,fname,folder,width,height):
+        file_name_l = "left_"+fname
+        file_name_r = "right_"+fname
+        cmd = f"libcamera-jpeg -o {file_name_l} --camera 0 --width={width} --height={height}"
+        out,err = self.execute(cmd)
+
+        if out.channel.recv_exit_status() == 0:
+            calib_l_file,err = self.get_file(file_name_l,dest_folder=folder)
+            if err:
+                return ([],err,)
+
+        else:
+            return ([],"".join(err.readlines()),)
         
+        cmd = f"libcamera-jpeg -o {file_name_r} --camera 1 --width={width} --height={height}"
+        out,err = self.execute(cmd)
+
+        if out.channel.recv_exit_status() == 0:
+            calib_r_file,err= self.get_file(file_name_r,dest_folder=folder)
+            if err:
+                return ([],err)
+        else:
+            return ([],"".join(err.readlines()),)
+        
+        return ((calib_l_file,calib_r_file,),None,)
+
     def get_calibration_images(self,width=640,height=480):
-        fname_l = "calib_image_l.jpg"
-        fname_r = "calib_image_r.jpg"
-
-        cmd = f"libcamera-jpeg -o {fname_l} --camera 0 --width={width} --height={height}"
-        out,err = self.execute(cmd)
-
-        if out.channel.recv_exit_status() == 0:
-            calib_l_file = self.get_file(fname_l)
-        else:
-            return [],err.readlines()
-        
-        cmd = f"libcamera-jpeg -o {fname_r} --camera 1 --width={width} --height={height}"
-        out,err = self.execute(cmd)
-
-        if out.channel.recv_exit_status() == 0:
-            calib_r_file = self.get_file(fname_r)
-        else:
-            return [],err.readlines()
-        
-        return (calib_l_file,calib_r_file,),None
+        fname = "calib_image.jpg"
+        files,err = self.get_stereo_images(fname,width=width,height=height)
+        return (files,err,)
     
     def get_sample_image(self,folder,width=640,height=480):
-        fname_l = "sample_image_l.jpg"
-        fname_r = "sample_image_r.jpg"
-
-        cmd = f"libcamera-jpeg -o {fname_l} --camera 0 --width={width} --height={height}"
-        out,err = self.execute(cmd)
-
-        if out.channel.recv_exit_status() == 0:
-            calib_l_file = self.get_file(fname_l,folder)
-        else:
-            return [],err.readlines()
-        
-        cmd = f"libcamera-jpeg -o {fname_r} --camera 1 --width={width} --height={height}"
-        out,err = self.execute(cmd)
-
-        if out.channel.recv_exit_status() == 0:
-            calib_r_file = self.get_file(fname_r,folder)
-        else:
-            return [],err.readlines()
-        
-        return (calib_l_file,calib_r_file,),None
+        fname = "sample_image.jpg"
+        files,err = self.get_stereo_images(fname,folder,width=width,height=height)
+        return files,err 
 
     def get_sample_video(self,video_len=5,width=640,height=480):
-        fname_l = "sample_video_left.avi"
-        fname_r = "sample_video_right.avi"
-        cmd_l = f"libcamera-vid -t {video_len} -cs 0 -o {fname_l} --width {width} --height{height}"
-        cmd_r = f"libcamera-vid -t {video_len} -cs 0 -o {fname_r} --width {width} --height{height}"          
-        pass
+        fname = "sample_video"
 
+        cmd = f"python get_video.py -r {video_len} -f {fname} -w {width} -h {height}"         
+        out,err = self.execute(command=cmd)
+
+        if out.channel.recv_exit_status() == 0:
+            left_v_pth,err= self.get_file("left_"+fname+".avi")
+            if err:
+                return ((None,None),err,)
+            right_v_pth,err= self.get_file("right_"+fname+".avi")
+            if err:
+                return ((None,None),err,)
+            return (left_v_pth,right_v_pth),None
+        return ((None,None),"".join(err.readlines()),)
 
 
 
@@ -111,5 +111,5 @@ if __name__ == "__main__":
     print("\n\n")
     print("Test error :")
 
-    for line in err:
+    for line in err.readlines():
         print(line)

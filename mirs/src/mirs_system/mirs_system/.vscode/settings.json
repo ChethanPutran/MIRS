@@ -1,17 +1,17 @@
 {
-	"[python]": {
-		"editor.defaultFormatter": "ms-python.autopep8"
-	},
-	"python.formatting.provider": "none",
-	"ros.distro": "foxy",
-	"python.autoComplete.extraPaths": [
-		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_test\\Lib\\site-packages",
-		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
-		"C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages"
-	],
-	"python.analysis.extraPaths": [
-		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_test\\Lib\\site-packages",
-		"c:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
-		"C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages"
-	]
+    "python.autoComplete.extraPaths": [
+        "/home/chethan/Desktop/MIRS/mirs/build/mirs_system",
+        "/home/chethan/Desktop/MIRS/mirs/install/mirs_system/lib/python3.10/site-packages",
+        "/home/chethan/Desktop/MIRS/mirs/install/mirs_interfaces/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/chethan/Desktop/MIRS/mirs/build/mirs_system",
+        "/home/chethan/Desktop/MIRS/mirs/install/mirs_system/lib/python3.10/site-packages",
+        "/home/chethan/Desktop/MIRS/mirs/install/mirs_interfaces/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "ros.distro": "humble"
 }

@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
-from raspberrypi import Raspberrypi
+from .raspberrypi import Raspberrypi
 import time
 
 CALIBRATION_IMAGES = "stereo"  

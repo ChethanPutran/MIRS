@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 from matplotlib import patches
-from mirs_system.ai.vision.calibration.calibration import Calibration
+from ai.vision.calibration.calibration import Calibration
 
 DISTANCE = 10
 
@@ -37,22 +37,6 @@ class CoordinateEstimator:
             P2=32 * 3 * self.window_size ** 2,
             mode=cv2.STEREO_SGBM_MODE_SGBM_3WAY
         )
-
-    def compute_depth(self,img_l,img_r):
-        # Step 1. Estimating disparity map
-        disparity_map = self.compute_disparity_map(img_l, img_r)
-
-        # Step 2. Decompose projection matrix
-        # K_left, R_left, t_left = self.decompose_projection_mat(
-        #     self.projection_mat_left)
-        # *_, t_right = self.decompose_projection_mat(
-        #     self.projection_mat_right)
-
-        # Step 3. Calculate depth map
-        self.depth_map = self.compute_depth_map(
-            disparity_map, K_left, t_left, t_right)
-        
-
 
     def compute_disparity_map(self, img_left, img_right, left=True, right=False):
         """ 
@@ -166,7 +150,10 @@ class CoordinateEstimator:
 
         plt.show()
 
-    def estimate(self, img_left, img_right, object_image):
+    def estimate(self, img_left_pth, img_right_pth):
+        img_left = cv2.imread(img_left_pth)
+        img_right = cv2.imread(img_right_pth)
+        
         """
         ***** Depth Estimation Steps *****
         1. Determine the disparity between the two images.
@@ -183,10 +170,10 @@ class CoordinateEstimator:
         self.display_disparity_map(disparity_map)
 
         # Step 2. Decompose projection matrix
-        K_left, R_left, t_left = self.decompose_projection_mat(
-            self.projection_mat_left)
-        K_right, R_right, t_right = self.decompose_projection_mat(
-            self.projection_mat_right)
+        # K_left, R_left, t_left = self.decompose_projection_mat(
+        #     self.projection_mat_left)
+        # K_right, R_right, t_right = self.decompose_projection_mat(
+        #     self.projection_mat_right)
 
         # Step 3. Calculate depth map
         depth_map = self.compute_depth_map(
@@ -195,20 +182,22 @@ class CoordinateEstimator:
         # Display depth map
         self.display_depth_map(depth_map)
 
+    def get_collision_safe(self):
         # Step 4. Finding the distance to pick
-        cross_corr_map, object_location = self.locate_object(
-            img_left, object_image)
-        closest_point_depth, object_bbox = self.calculate_nearest_point(
-            depth_map, object_location, object_image)
+        # cross_corr_map, object_location = self.locate_object(
+        #     img_left, object_image)
+        # closest_point_depth, object_bbox = self.calculate_nearest_point(
+        #     depth_map, object_location, object_image)
 
-        # Display cross correlation map
-        self.display_image(img_left, cross_corr_map)
+        # # Display cross correlation map
+        # self.display_image(img_left, cross_corr_map)
 
-        print(
-            "\nObstacle Location (left-top corner coordinates):\n {0}".format(list(object_location)))
+        # print(
+        #     "\nObstacle Location (left-top corner coordinates):\n {0}".format(list(object_location)))
 
-        print("\nClosest point depth (meters):\n {0}".format(
-            closest_point_depth))
+        # print("\nClosest point depth (meters):\n {0}".format(
+        #     closest_point_depth))
+        pass
 
     def display_depth_map(self, depth_map):
         # Display the depth map
@@ -223,6 +212,7 @@ class CoordinateEstimator:
         plt.show()
 
     def get_way_points_depth(self, image_l, image_r, way_points):
+        self.process(image_l,image_r)
        
         depths = []
         for waypoint in way_points:
@@ -230,10 +220,13 @@ class CoordinateEstimator:
 
         return depths
     
-    def process(self):
-        pass
+    def process(self,image_l,image_r):
+        self.disparity_map = self.compute_disparity_map(image_l, image_r)
+        self.depth_map = self.compute_depth_map(
+            self.disparity_map, K_left, t_left, t_right)
     
     def get_point_depth(self,image_1,image_r,point):
+        self.process(image_1,image_r)
         return self.depth_map[point]
     
     def get_3Dpoint_depth(self,image_1,image_r,point):
