@@ -95,21 +95,3 @@ class Raspberrypi:
             return (left_v_pth,right_v_pth),None
         return ((None,None),"".join(err.readlines()),)
 
-
-
-if __name__ == "__main__":
-    rasp = Raspberrypi()
-
-    out,err = rasp.execute("ls")
-
-    print("Exit status : ",out.channel.recv_exit_status())
-    print("\n\nTest output :")
-
-    for line in out:
-        print(line)
-
-    print("\n\n")
-    print("Test error :")
-
-    for line in err.readlines():
-        print(line)

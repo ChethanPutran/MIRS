@@ -1,11 +1,11 @@
 import os
 import cv2
 import numpy as np
-# from ai.task.task import Task
-# from ai.vision.estimator.action_identifier import ActionIdentifier
-# from ai.vision.estimator.object_identifier import ObjectIdentifier
-# from ai.vision.estimator.object_pose import PoseEstimator
-from ai.vision.estimator.depth_estimator import CoordinateEstimator
+# from mirs_system.ai.task.task import Task
+# from mirs_system.ai.vision.estimator.action_identifier import ActionIdentifier
+# from mirs_system.ai.vision.estimator.object_identifier import ObjectIdentifier
+# from mirs_system.ai.vision.estimator.object_pose import PoseEstimator
+from mirs_system.ai.vision.estimator.depth_estimator import CoordinateEstimator
 # from ai.vision.estimator.hand_pose import HandPose
 
 
@@ -124,7 +124,7 @@ SINGLE_OBJECT = True
 
 
 def main():
-    from .vision.calibration.raspberrypi import Raspberrypi
+    from mirs_system.ai.vision.calibration.raspberrypi import Raspberrypi
 
     # te = Extractor()
 
