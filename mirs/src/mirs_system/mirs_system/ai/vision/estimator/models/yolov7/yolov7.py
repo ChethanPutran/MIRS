@@ -1,25 +1,23 @@
 import os
 import sys
-# sys.path.append('./') 
-
-
 import cv2
 import numpy as np
 from io import BytesIO
 from PIL import Image
 import torch
 from .models.experimental import attempt_load
-from .utils.general import non_max_suppression
+from .models.common import non_max_suppression
 
 class Model():
     def __init__(self):
         self.loaded = False
-        self.WEIGHTS = os.path.join(os.path.dirname(__file__),"yolov7.pt")
+        self.WEIGHTS = os.path.join(os.path.dirname(__file__),"yolov-custom.pt")
         self.model = None
         self.DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
         self.IMAGE_SIZE = 640
 
     def load(self):
+        print(f"Using {self.WEIGHTS} ...")
         self.model = attempt_load(self.WEIGHTS, map_location=self.DEVICE)
         self.loaded = True
 

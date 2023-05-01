@@ -1,4 +1,4 @@
-from ai.vision.estimator.models.action_identifier import model
+from mirs_system.ai.vision.estimator.models.action_identifier import model
 
 
 class ActionIdentifier:

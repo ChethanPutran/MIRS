@@ -1,14 +1,11 @@
 import cv2
 import numpy as np
 import glob
+from mirs_system.ai.vision.calibration.calibration import Calibration
 
 class PoseEstimator(object):
-    def __init__(self) -> None:
-        with np.load('CameraParams.npz') as file:
-            self.camera_mat,self.dist_param,self.rot_mat,self.trans_vec = [file[i] for i in ('camera_matrix',
-                                               'distorsion_params',
-                                               'rotation_matrix',
-                                               'translational_vector')]
+    def __init__(self):
+            self.camera_mat1,self.dist_param1,self.camera_mat2,self.dist_param2,self.rot_mat,self.trans_vec = Calibration.load_stereo_params()
     def draw_line_for_corners(img,corners,img_points):
         corner = tuple(corners[0].ravel())
         img = cv2.line(img,corner,tuple(img_points[0].ravel()),(255,0,0),10)
