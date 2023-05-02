@@ -1,0 +1,15 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "C:\\opt\\ros\\foxy\\x64\\include\\**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
