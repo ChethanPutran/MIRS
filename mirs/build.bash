@@ -1,20 +1,10 @@
-cd ~/Desktop/MajorProject/mirs
+if [["$1" == "1"]] 
+then  
 colcon build --packages-select mirs_system --symlink-install
+else 
+colcon build --packages-select mirs_interfaces --symlink-install
+fi
 source ./install/setup.bash
 
 
-  "msg/Error.msg"
-  "msg/JointState.msg"
-  "msg/MotorSensorFeedback.msg"
-  "msg/MotorState.msg"
-  "msg/RobotState.msg"
-  "msg/SystemState.msg"
-  "msg/Task.msg"
-  "msg/TaskExecutorState.msg"
-  "msg/TaskExtractorState.msg"
-  "msg/TaskRecorderState.msg"
-  "msg/Tasks.msg"
-  "msg/Theta.msg"
-  "msg/Trajectory.msg"
-  "msg/VoiceState.msg"
 

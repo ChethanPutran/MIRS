@@ -4,10 +4,8 @@ import cv2
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
-from mirs_system.ai.vision.calibration.raspberrypi import Raspberrypi
 import time
 from scipy import linalg
-import yaml
 
 
 
@@ -138,11 +136,12 @@ class Calibration:
     camera_mat_left = os.path.join(dir_path,"camera_parameters","camera_left.npz")
     camera_mat_right = os.path.join(dir_path,"camera_parameters","camera_right.npz")
     stereo_data_path = os.path.join(dir_path,"camera_parameters","stereo.npz")
+    left_imgs = glob.glob(os.path.join(dir_path,"stereo","right-*.jpg"))
+    right_imgs = glob.glob(os.path.join(dir_path,"stereo","left-*.jpg"))
 
     def __init__(self):
         self.chess_board_size = (5,5)
         
-
         # stop the iteration when specified
         # accuracy, epsilon, is reached or
         # specified number of iterations are completed.
@@ -153,12 +152,8 @@ class Calibration:
         self.rotation_matrix = []
         self.translational_vector = []
         self.n_points = 61
-
         
-        self.left_imgs = glob.glob(os.path.join(dir_path,"stereo","right-*.jpg"))
-        self.right_imgs = glob.glob(os.path.join(dir_path,"stereo","left-*.jpg"))
-        
-    def calibrate(self,images_path,fname,show=True):
+    def calibrate(self,images_path,fname='',show=True):
 
         #coordinates of squares in the checkerboard world space
         objp = np.zeros((CHECK_BOARD_ROWS*CHECK_BOARD_COLUMNS,3), np.float32)
@@ -208,60 +203,33 @@ class Calibration:
         if show:   
             cv2.destroyAllWindows()
 
-        ret, cmtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, (WIDTH, HEIGHT), None, None)
+        ret, cmtx, dist = cv2.calibrateCamera(objpoints, imgpoints, (WIDTH, HEIGHT), None, None)
      
 
-    
-        self.save_camera_params(fname,camera_matrix=cmtx,
-                distorsion_params=dist,
-                rotation_matrix=rvecs,
-                translational_vector=tvecs
-                )
-        return cmtx, dist, rvecs, tvecs
+        if fname:
+            self.save_camera_params(fname,camera_matrix=cmtx,
+                    distorsion_params=dist)
+        return cmtx, dist
 
-    def collect_points(self):
-        object_points_3D = get_cube_surface_points(9,9,9)
-        image_points = []
-
-        # Loading images
-        left_img_path = os.path.join(dir_path,"stereo\\")+"test-left-*.jpg"
-        right_img_path = os.path.join(dir_path,"stereo\\")+"test-right-*.jpg"
-      
-        left_images = glob.glob(left_img_path)
-        right_images = glob.glob(right_img_path)
-
-        for idx,img_path in enumerate(left_images):
-            img = cv2.imread(img_path)
-            image_points = get_2D_image_points(img)
-            np.savez(f"{dir_path}/points/points_data_left_camera_{idx}",x=object_points_3D,y=image_points)
-            break
-        
-        for idx,img_path in enumerate(right_images):
-            img = cv2.imread(img_path)
-            image_points = get_2D_image_points(img)
-            np.savez(f"{dir_path}\\points\\points_data_right_camera_{idx}",x=object_points_3D,y=image_points)
-            break 
-
+ 
     @staticmethod
     def load_camera_params(right_cam=False):
         """ Default left camera params"""
         
         if not right_cam:
             data = np.load(Calibration.camera_mat_left)
-            camera_matrix,distortion,rot_matrix,t_vector = data['camera_matrix'],data['distorsion_params'],data['rotation_matrix'],data['translational_vector']
+            camera_matrix,distortion = data['camera_matrix'],data['distorsion_params']
 
         else:
             data = np.load(Calibration.camera_mat_left)
-            camera_matrix,distortion,rot_matrix,t_vector = data['camera_matrix'],data['distorsion_params'],data['rotation_matrix'],data['translational_vector']
+            camera_matrix,distortion = data['camera_matrix'],data['distorsion_params']
 
-        return camera_matrix, distortion, rot_matrix, t_vector 
+        return camera_matrix, distortion
     
-    def save_camera_params(self,fname,camera_matrix,distorsion_params,rotation_matrix,translational_vector):
+    def save_camera_params(self,fname,camera_matrix,distorsion_params):
         print("Saving camera params...")
         np.savez(fname,camera_matrix=camera_matrix,
-                 distorsion_params=distorsion_params,
-                 rotation_matrix=rotation_matrix,
-                 translational_vector=translational_vector)
+                 distorsion_params=distorsion_params)
         print("Saved.")
 
     @staticmethod
@@ -284,6 +252,8 @@ class Calibration:
                 right_imgs_path = self.right_imgs 
             else:
                 print("Calibrating with new images...")
+
+                from mirs_system.ai.vision.calibration.raspberrypi import Raspberrypi
                 rasp = Raspberrypi()
                 files,err = rasp.get_calibration_images(Calibration.WIDTH,Calibration.HEIGHT)
 
@@ -295,8 +265,8 @@ class Calibration:
                     print("ERROR : ",err)
                     return self.calibrate_stereo_camera(False)
                 
-            cmtx_l,dist_l,rvec_l,tvec_l = self.calibrate(left_imgs_path,Calibration.camera_mat_left,show=show)
-            cmtx_r,dist_r,rvec_r,tvec_r  = self.calibrate(right_imgs_path,Calibration.camera_mat_right,show=show)
+            cmtx_l,dist_l = self.calibrate(left_imgs_path,Calibration.camera_mat_left,show=show)
+            cmtx_r,dist_r = self.calibrate(right_imgs_path,Calibration.camera_mat_right,show=show)
 
             
             CM1,dist0,CM2,dist1,R, T = self.stereo_calibrate(cmtx_l, dist_l, cmtx_r, dist_r, left_imgs_path, right_imgs_path,show=show)
@@ -321,12 +291,13 @@ class Calibration:
 
             return None, e
     
-    def undistort(self,img):
-        img = cv2.imread("/images/1.png")
-        h,w = img.shape[:2]
-        new_cam_mat,roi = cv2.getOptimalNewCameraMatrix(cameraMatrix=self.camera_matrix,
-                                                        distCoeffs=self.distorsion_params,
+    @staticmethod
+    def undistort(cmtx,dist):
+        new_cam_mat,roi = cv2.getOptimalNewCameraMatrix(cameraMatrix=cmtx,
+                                                        distCoeffs=dist,
+                                                        imageSize= (Calibration.HEIGHT, Calibration.WIDTH)
                                                         )
+        return new_cam_mat,roi
         
     #Given Projection matrices P1 and P2, and pixel coordinates point1 and point2, return triangulated 3D point.
     def DLT(self, P1, P2, point1, point2):
@@ -408,7 +379,8 @@ class Calibration:
         return CM1,dist0,CM2,dist1,R, T
 
     #Converts Rotation matrix R and Translation vector T into a homogeneous representation matrix
-    def make_homogeneous_rep_matrix(self,R, t):
+    @staticmethod
+    def make_homogeneous_rep_matrix(R, t):
         P = np.zeros((4,4))
         P[:3,:3] = R
         P[:3, 3] = t.reshape(3)
@@ -416,9 +388,25 @@ class Calibration:
         return P
     
     # Turn camera calibration data into projection matrix
-    def get_projection_matrix(self,cmtx, R, T):
-        P = cmtx @ self.make_homogeneous_rep_matrix(R, T)[:3,:]
+    @staticmethod
+    def get_projection_matrix(cam_id):
+        cmtx,dist,r_vec,t_vec = Calibration.load_camera_params(cam_id==1)
+        P = cmtx @ Calibration.make_homogeneous_rep_matrix(r_vec, t_vec)[:3,:]
         return P
+    
+    @staticmethod
+    def get_stereo_projection_matrix(undistort=False):
+        cmtx1,dist1,cmtx2,dist2,r_lr,t_lr = Calibration.load_stereo_params()
+        if undistort:
+            cmtx1 = Calibration.undistort(cmtx=cmtx1,dist=dist1)
+            cmtx2 = Calibration.undistort(cmtx=cmtx2,dist=dist2)
+            
+        r_0l = np.eye(3, dtype=np.float32)
+        t_0l = np.array([0., 0., 0.]).reshape((3, 1))
+
+        P1 = cmtx1 @ Calibration.make_homogeneous_rep_matrix(r_0l, t_0l)[:3,:]
+        P2 = cmtx2 @ Calibration.make_homogeneous_rep_matrix(r_lr, t_lr)[:3,:]
+        return P1,P2
 
     # After calibrating, we can see shifted coordinate axes in the video feeds directly
     def check_calibration(self,camera_l_data, camera_r_data, _zshift = 50.):
@@ -572,8 +560,7 @@ class Calibration:
         return R_WR, T_WR
 
 
-
-if __name__ == "__main__":
+def main():
     cc = Calibration()
 
     
@@ -587,9 +574,6 @@ if __name__ == "__main__":
     (data,error,) = cc.calibrate_stereo_camera(show=False)
 
     if not error:
-
-        # cmtx_l,dist_l,*_ = cc.load_camera_params()
-        # cmtx_r,dist_r,*_ = cc.load_camera_params()
        
         cmtx_l,dist_l,cmtx_r,dist_r,R_LR, T_LR = data
 
@@ -618,3 +602,8 @@ if __name__ == "__main__":
     
     else:
         print("ERROR :",error)
+
+
+if __name__ == "__main__":
+    cc = Calibration()
+    print(cc.calibrate(Calibration.left_imgs))
