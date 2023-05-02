@@ -296,8 +296,8 @@ class Task:
                  initial_position,final_position,
                  initial_pose,final_pose,
                  time_gap,
-                 ee_pose_i,
-                 ee_pose_f,
+                #  ee_pose_i,
+                #  ee_pose_f,
                  hand_landmarks = [],
                  num_fingers=3,DOF_finger=3,n_steps=10):
         
@@ -307,9 +307,9 @@ class Task:
         self.__X_f = final_position
         self.__theta_i = initial_pose
         self.__theta_f = final_pose
-        self.__ee_theta_i = ee_pose_i
-        self.__ee_theta_f = ee_pose_f
-        self.__hand_3d_landmarks = hand_landmarks
+        # self.__ee_theta_i = ee_pose_i
+        # self.__ee_theta_f = ee_pose_f
+        # self.__hand_3d_landmarks = hand_landmarks
         self.__time_gap = time_gap
         self.num_fingers = num_fingers
         self.DOF_finger = DOF_finger
