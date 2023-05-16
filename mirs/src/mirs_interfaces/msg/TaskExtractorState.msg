@@ -1,4 +1,5 @@
 string status
-string[] tasks
+string mssg
+Task[] tasks
 string error
 

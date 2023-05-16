@@ -1,5 +1,6 @@
 string status
 string error
-string messagex
+string mssg
 string recording
 string command
+Task[] tasks

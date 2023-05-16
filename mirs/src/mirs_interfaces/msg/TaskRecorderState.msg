@@ -1,4 +1,5 @@
 string status
-float32[] recording
+string mssg
+string recording
 string error
 

@@ -1,20 +1,17 @@
 #import copy
 import math
 import rclpy
-from rclpy.node import Node
 import numpy as np
 # from control_msgs.msg import FollowJointTrajectoryAction
 from trajectory_msgs.msg import JointTrajectoryPoint
 from mirs_controller.trajectory.control.controllers import ArmJointController,EEController
 from mirs_controller.dynamics.dynamics import Dynamics
-from mirs_interfaces.topics.topics import TOPICS
+from mirs_system.conf.topics import TOPICS
 from mirs_interfaces.msg import Trajectory
 
-class TrajectoryFollower(Node):
+class TrajectoryFollower:
     def __init__(self,goal_time_tolerance=[0.05, 0.05, 0.05, 0.05, 0.05, 0.05]):
-        super().__init__('TrajectoryFollower')
         self.dynamics = Dynamics()
-        self.robot = self.get_parameter("robot").get_parameter_value()
         self.joints = self.robot.joints 
         self.Kp = np.zeros((self.robot.DOF),1)
         self.Kd = np.zeros((self.robot.DOF),1)
@@ -145,14 +142,13 @@ class TrajectoryFollower(Node):
                     # The arm reached the goal (and isn't moving) => Succeeded
                     self.goal_handle.set_succeeded()
 
-    def follow_and_act(self,msg):
-        self.get_logger().info("Trajectory follower started...")
-        trajectory,action_sequence = msg
+    def follow_and_act(self,trajectory,action_sequence):
+        print("Trajectory follower started...")
         error = None 
         status = True
 
         ee_controller = EEController()
-        arm_controller = ArmJointController(self.joints,self.publish_motor_state,self.Kp,self.Kd,self.Ki)
+        arm_controller = ArmJointController(self.joints,self.Kp,self.Kd,self.Ki)
 
         try:
             for point,time_stamp in zip(trajectory.get_trajectory_points(),trajectory.get_trajectory_times()):
@@ -171,14 +167,3 @@ class TrajectoryFollower(Node):
         return status,error
 
     
-def main(args):
-    rclpy.init(args=args)
-    
-    tf = TrajectoryFollower()
-
-    rclpy.spin(tf)
-
-    tf.destroy_node()
-
-    rclpy.shutdown()
-

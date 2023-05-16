@@ -25,7 +25,8 @@ def generate_launch_description():
     voice = Node(
         package="mirs_system",
         executable="voice",
-        name="mirs_voice"
+        name="mirs_voice",
+        output='screen'
         )
     
     # task_recorder = Node(

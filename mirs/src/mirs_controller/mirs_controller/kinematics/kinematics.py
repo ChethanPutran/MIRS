@@ -1,9 +1,11 @@
 import numpy as np
+import sympy as sym
+from sympy import Symbol,Matrix,zeros,eye,cos,sin,pi
 #from ikpy.chain import Chain
 from mirs_controller.transformations.matrices import Matrices
-pi = np.pi
-cos = np.cos
-sin = np.sin
+# pi = np.pi
+# cos = np.cos
+# sin = np.sin
 
 L1 = 150
 L2 = 200
@@ -16,11 +18,11 @@ L6 = 25
 class Kinematics:
     def __init__(self):
         self.matrices = Matrices
+        self.computed = False
 
     def forward(self,theta):
         return np.dot(self.matrices.get_ee_pose(),theta)
         
-
     def inverse(self,x,y,z,theta,beta,gamma):
         
         # Define the desired position of the end effector
@@ -130,7 +132,7 @@ class Kinematics:
 
 
         for i in range(0,self.n):
-            T = self.matrices.HomogenousTM(i-1,self.n)
+            T = self.matrices.homogenous_transformation_matrix(i-1,self.n)
 
             n = T[:,0]
             o = T[:,1]
@@ -175,5 +177,189 @@ class Kinematics:
         J_inv = np.linalg.inv(J)
         return np.dot(J_inv,ee_velocity)
 
+    def DH(self,alpha, a, d, theta):
+            
+        a11 = cos(theta)
+        a12 = -sin(theta)*round(cos(alpha),2)
+        a13 = sin(theta)*round(sin(alpha),2)
+        a14 = a*cos(theta)
+
+        a21 = sin(theta)
+        a22 = cos(theta)*round(cos(alpha),2)
+        a23 = -cos(theta)*round(sin(alpha),2)
+        a24 = a*sin(theta)
+
+        a31 = 0
+        a32 = round(sin(alpha),2)
+        a33 = round(cos(alpha),2)
+        a34 =d
+
+        a41 = 0
+        a42 = 0
+        a43 = 0
+        a44 = 1
+
+
+        trans_mat = Matrix([[a11, a12, a13, a14],
+            [a21, a22, a23, a24],
+            [a31, a32, a33, a34],
+            [a41, a42, a43, a44]])
       
-      
+        return trans_mat
+
+    def compute_kinematics(self):
+        self.computed = True
+
+        #Forward kinematics and forward differential kinematics analysis of 6 DOF MIR
+
+        n = 6
+
+        q1 = Symbol('q1')
+        q2 = Symbol('q2')
+        q3 = Symbol('q3')
+        q4 = Symbol('q4')
+        q5 = Symbol('q5')
+        q6 = Symbol('q6')
+        D1 = Symbol('D1')
+        D2 = Symbol('D2')
+        D3 = Symbol('D3')
+        D4 = Symbol('D4')
+        D5 = Symbol('D5')
+        D6 = Symbol('D6')
+        e2 = Symbol('e2')
+        aa = Symbol('aa')
+        d4b = Symbol('d4b')
+        d5b = Symbol('d5b')
+        d6b = Symbol('d6b')
+       
+        D1 = 0.2755
+        D2 = 0.41
+        D3 = 0.2073
+        D4 = 0.0741
+        D5 = 0.0741
+        D6 = 0.16
+        e2 = 0.0098
+        aa = pi/6
+        d4b = D3 + sin(aa)/sin(2*aa)*D4
+        d5b = sin(aa)/sin(2*aa)*(D4+D5)
+        d6b = sin(aa)/sin(2*aa)*D5 + D6
+       
+
+        #Forward kinematics
+        #Classic Denavit Hartenberg parameters
+        alpha = [pi/2, pi, pi/2, pi/3, pi/3, pi]
+        a = [0, D2, 0, 0, 0, 0]
+        d = [D1, 0, -e2, -d4b, -d5b, -d6b]
+        theta = [-q1, q2+pi/2, q3-pi/2, q4, q5+pi, q6-pi/2]
+
+        #Compute DH matrices
+        A = zeros(4,n*4)
+        
+        A[:,0:4] = sym.simplify(self.DH(alpha[0], a[0], d[0], theta[0]))
+
+        for i in range(1,6):
+            A[:,4*i:4*(i+1)] = sym.simplify(self.DH(alpha[i], a[i], d[i], theta[i]))
+        
+        print('DH completed')
+        
+        #Compute relative homogeneous transformation matrices
+        self.T1_0 = A[:,0:4]
+        self.T2_1 = A[:,4:8]
+        self.T3_2 = A[:,8:12]
+        self.T4_3 = A[:,12:16]
+        self.T5_4 = A[:,16:20]
+        self.T6_5 = A[:,20:24]
+
+        #Compute kinematic equation
+        self.T6_0 = self.T1_0 * self.T2_1 * self.T3_2 * self.T4_3 * self.T5_4 * self.T6_5 #homogeneous transformation matrix from frame 6 to frame 0
+        self.T6_0 = sym.simplify(self.T6_0)
+
+
+        #End effector's rotation matrix
+        r11 = self.T6_0[0,0]
+        r21 = self.T6_0[1,0]
+        r31 = self.T6_0[2,0]
+
+        r12 = self.T6_0[0,1]
+        r22 = self.T6_0[1,1]
+        r32 = self.T6_0[2,1]
+
+        r13 = self.T6_0[0,2]
+        r23 = self.T6_0[1,2]
+        r33 = self.T6_0[2,2]
+
+        #End effector's position vector
+        px = self.T6_0[0,3]
+        py = self.T6_0[1,3]
+        pz = self.T6_0[2,3]
+
+        print('Compute kinematics completed.')
+
+
+    def forward_differential_kinematics(self):
+        if not self.computed:
+            self.compute_kinematics()
+
+
+        #Forward differential kinematics
+        #Compute the homogeneous transformation matrices from frame i to inertial frame 0
+        self.T1_0 = self.T1_0
+        self.T2_0 = sym.simplify(self.T1_0*self.T2_1)
+        self.T3_0 = sym.simplify(self.T2_0*self.T3_2)
+        self.T4_0 = sym.simplify(self.T3_0*self.T4_3)
+        self.T5_0 = sym.simplify(self.T4_0*self.T5_4)
+        self.T6_0 = sym.simplify(self.T5_0*self.T6_5)
+
+        #Extract position vectors from each homogeneous transformation matrix
+        # p0 = zeros(3,1) 
+        # p1 = self.T1_0[0:3,3]
+        # p2 = self.T2_0[0:3,3]
+        # p3 = self.T3_0[0:3,3]
+        # p4 = self.T4_0[0:3,3]
+        # p5 = self.T5_0[0:3,3]
+        # p6 = self.T6_0[0:3,3]
+
+        #Define vectors around which each link rotates in the precedent coordinate frame
+        z0 = Matrix([0,0,1])  #3x1
+
+        z1 = self.T1_0[0:3,2]
+        z2 = self.T2_0[0:3,2]
+        z3 = self.T3_0[0:3,2]
+        z4 = self.T4_0[0:3,2]
+        z5 = self.T5_0[0:3,2]
+        # z6 = self.T6_0[0:3,2]
+
+        # print("Jacob started!")
+        # #Jacobian matrix
+        # j11 = z0.cross(p6-p0)
+        # j12 = z1.cross(p6-p1)
+        # j13 = z2.cross(p6-p2)
+        # j14 = z3.cross(p6-p3)
+        # j15 = z4.cross(p6-p4)
+        # j16 = z5.cross(p6-p5)
+
+        # j21 = z0
+        # j22 = z1
+        # j23 = z2
+        # j24 = z3
+        # j25 = z4
+        # j26 = z5
+
+        # J = sym.simplify(Matrix([[j11, j12, j13, j14, j15, j16],
+        #                 [j21, j22, j23, j24, j25, j26]]))  
+        
+        # # Rounding
+        # J = J.n(2)
+                
+        # #Extract linear jacobian
+        # Jl = J[0:3,:]
+
+        # #Extract angular jacobian
+        # Ja = J[3:,:]
+        
+        # print("Jascob finished")
+
+        return z0,z1,z2,z3,z4,z5
+
+    def get_diff_transforms(self):
+        return self.T1_0 ,self.T2_0 ,self.T3_0 ,self.T4_0,self.T5_0 ,self.T6_0 

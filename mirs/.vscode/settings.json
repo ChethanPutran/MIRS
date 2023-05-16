@@ -1,11 +1,16 @@
 {
+    "ros.distro": "foxy",
     "python.autoComplete.extraPaths": [
-        "/opt/ros/humble/lib/python3.10/site-packages",
-        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+        "C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages",
+        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
+        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_interfaces\\lib\\site-packages",
+        
+        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_interfaces\\lib\\mirs_interfaces"
     ],
     "python.analysis.extraPaths": [
-        "/opt/ros/humble/lib/python3.10/site-packages",
-        "/opt/ros/humble/local/lib/python3.10/dist-packages"
-    ],
-    "ros.distro": "humble"
+        "C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages",
+        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
+        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_interfaces\\lib\\site-packages",
+        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_interfaces\\lib\\mirs_interfaces"
+    ]
 }

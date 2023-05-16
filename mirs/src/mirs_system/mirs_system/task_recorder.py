@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 from mirs_system.conf.topics import TOPICS
 from mirs_interfaces.msg import TaskRecorderState, SystemState
-from mirs_interfaces.devices import camera_client
+from mirs_system.ai.vision.camera import camera_client
 from .conf.states import States
 from .conf.commands import COMMANDS
 
@@ -46,7 +45,7 @@ class TaskRecorder(Node):
 
         msg.status = self.state['status']
         msg.error = self.state['error']
-        msg.message = self.state['message']
+        msg.mssg = self.state['message']
         msg.recording = self.state['recording']
 
         self.recording_state_publisher.publish(msg)
@@ -61,14 +60,14 @@ class TaskRecorder(Node):
     def get_recording_status(self):
         return self.state['status']
 
-    def set_recording_cmd(self, msg):
+    def set_recording_cmd(self, msg:SystemState):
 
         # Recieved recording
         if msg.status == States.DONE:
             self.set_state(States.INACTIVE)
 
         self.get_logger().info("Got command :"+msg.command)
-        if not ('record' in msg.command):
+        if 'record' not in msg.command:
             return
 
         recorder_status = self.get_recording_status()

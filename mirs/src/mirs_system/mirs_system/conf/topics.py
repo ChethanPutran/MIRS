@@ -13,6 +13,10 @@ class TOPICS:
     TOPIC_VOICE_STATE = "topic_voice_state"
     TOPIC_GUI_STATE = "topic_gui_state"
 
+
+    #Task
+    TOPIC_TASK = 'topic_task'
+
     # Task Extractor
     TOPIC_EXTRACTOR_STATUS = "topic_task_extractor_status"
 
@@ -31,6 +35,6 @@ class TOPICS:
     TOPIC_MOTOR6_STATE = "topic_motor6_state"
     TOPIC_MOTOR1_STATE = "topic_motor1_state"
     TOPIC_ROBOT_STATE = "topic_robot_state"
-    TOPIC_JOINT_STATE = "topic_joint_state"
+    TOPIC_JOINT_STATE = "joint_states"
     TOPIC_MOTOR_SENSOR_STATE = "topic_motor_sensor_state"
     TOPIC_TRAJECTORY = "topic_trajectory"

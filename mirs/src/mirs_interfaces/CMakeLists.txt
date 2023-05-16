@@ -12,31 +12,22 @@ find_package(std_msgs REQUIRED)
 
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/CameraState.msg"
-  "msg/Error.msg"
-  "msg/JointState.msg"
-  "msg/MotorSensorFeedback.msg"
-  "msg/MotorState.msg"
   "msg/RobotState.msg"
-  "msg/SystemState.msg"
-  "msg/GuiState.msg"
   "msg/Task.msg"
+  "msg/SystemState.msg"
   "msg/TaskExecutorState.msg"
   "msg/TaskExtractorState.msg"
   "msg/TaskRecorderState.msg"
   "msg/Tasks.msg"
-  "msg/Theta.msg"
-  "msg/Trajectory.msg"
   "msg/VoiceState.msg"
   DEPENDENCIES geometry_msgs std_msgs
   
  )
 
- 
 
-install(DIRECTORY devices
-  DESTINATION lib/${PROJECT_NAME}
-)
+#install(DIRECTORY devices
+#  DESTINATION lib/${PROJECT_NAME}
+#)
 
 
 #"srv/ExecTask.srv"

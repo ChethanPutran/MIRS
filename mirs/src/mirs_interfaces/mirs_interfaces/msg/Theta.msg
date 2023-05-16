@@ -1,1 +1,0 @@
-float32[] theta #theta (arr 9)

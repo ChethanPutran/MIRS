@@ -1,9 +1,10 @@
 import numpy as np
 import time 
 from mirs_controller.dynamics.dynamics import Dynamics
+from mirs_interfaces.hardware.hardware import Hardware
 
 class ArmJointController:
-    def __init__(self,joints,publisher_callback,Kp,Kd,Ki,tolerance=0.01):
+    def __init__(self,joints,Kp,Kd,Ki,tolerance=0.01):
         self.joints = joints
         self.n = len(joints)
         self.pre_theta = np.zeros((self.n,1))
@@ -14,20 +15,12 @@ class ArmJointController:
         self.Kd = Kd
         self.Ki = Ki
         self.Kp = Kp
-        self.motor_publisher_callback = publisher_callback
         self.tolerance = tolerance
 
-
-    def get_feedback(self):
-        for idx, joint in enumerate(self.joints):
-            self.theta[idx] = joint.get_position()
-            self.theta_dot[idx] = joint.get_velocity()
-            
-        return self.theta ,self.theta_dot
     
     def calulate_control_input(self,desired_theta,desired_theta_dot,desired_acc):
 
-        theta,theta_dot = self.get_feedback()
+        theta,theta_dot =  Hardware.get_feedback()
 
         # Calculating errors
         d_theta = desired_theta - theta 
@@ -47,12 +40,14 @@ class ArmJointController:
 
     # Closed loop control
     def forward(self,desired_theta,desired_theta_dot,desired_acc):
-        u =  self.calulate_control_input(desired_theta,desired_theta_dot,desired_acc)
-        if(u<self.tolerance):
-            return True
-        self.motor_publisher_callback(u)
-        time.sleep(1)
-        self.forward(desired_theta,desired_theta_dot,desired_acc)
+        # u =  self.calulate_control_input(desired_theta,desired_theta_dot,desired_acc)
+        # if(u<self.tolerance):
+        #     return True
+        
+        # Hardware.set_torque(u)
+        Hardware.set_motor(desired_theta,desired_theta_dot)
+        res = Hardware.get_feedback()
+        return res
 
 
     # set the PID control parameters

@@ -1,1 +1,1 @@
-string cmd
+string command
