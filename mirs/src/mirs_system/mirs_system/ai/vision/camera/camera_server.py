@@ -5,9 +5,12 @@ import time
 import struct
 import numpy as np
 import cv2 
+from picamera2 import Picamera2
+import cv2
+import time
 
-STERIO = False
-DEBUG = False
+STERIO = True
+DEBUG = True
 
 class Connection:
   def __init__(self,host='raspberrypi.local',port=8000):
@@ -126,6 +129,9 @@ class Camera(object):
     resolution = (3280 , 2464 )
     camera_left = 0
     camera_right = 1
+    WIDTH = 640
+    HEIGHT = 480
+    FPS = 30.0
 
     def __init__(self):
         self.state = {
@@ -143,19 +149,47 @@ class Camera(object):
            "active":False,
            "live":False
         }
+        self.exit =False
         self.FPS = 20
-        self.exit = False
+        self.size = (self.HEIGHT,self.WIDTH)
+
+        self.cam_left = Picamera2(0)
+        time.sleep(2)
+
+        self.fdl = (33333,33333)
+        if self.FPS == 20:
+            self.fdl = (40000,40000)
+        elif self.FPS == 10:
+            self.fdl = (100000,100000)
+
+        video_config = self.cam_left.create_video_configuration(main={"size": self.size,"format":"RGB888"},
+                                                                controls={"FrameDurationLimits":self.fdl})
+        self.cam_left.configure(video_config)
+
+        
+        self.cam_right = Picamera2(1)
+        time.sleep(2)
+        video_config = self.cam_right.create_video_configuration(main={"size":self.size,"format":"RGB888"},
+                                                            controls={"FrameDurationLimits":self.fdl})
+        self.cam_right.configure(video_config)
 
     def start_recording(self):
-        self.set_state(True)
+        self.state['record'] = True
+        self.exit = False
         self.record()
 
     def end_recording(self):
-        self.set_state(False)
-        print(self.state['record'])
-       
-    def set_state(self,record,recording_left=None,recording_right=None,active=None):
-        self.state['record'] = record
+        self.exit = True
+
+        if DEBUG:
+            print("Exit updated!")
+
+        # Wait untill recording get stopped
+        while self.state['record']:
+            time.sleep(1)
+
+   
+    def set_state(self,recording_left=None,recording_right=None,active=None):
         if recording_left:
             self.state['recording']['left'] = recording_left
         if recording_right:
@@ -167,26 +201,33 @@ class Camera(object):
         return self.state
     
     def get_recording_state(self):
-      return self.state['record']
+        return self.state['record']
     
-    def record(self,sterio=STERIO):
+    def record(self):
         try:
-            cam_left = cv2.VideoCapture(0)
+            FileName = str(int(time.time()))
 
-            fname_l = "left_"+str(time.time())+".avi"
-            # Define the codec and create VideoWriter object
+            fname_l = f"left_{FileName}.avi"
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            out_l = cv2.VideoWriter(fname_l, fourcc, 20.0, (640, 480))
+            out_l = cv2.VideoWriter(fname_l, fourcc, self.FPS, self.size)
 
-            if sterio:
-                cam_right = cv2.VideoCapture(1)
-                fname_r = "right_"+str(time.time())+".avi"
-                out_r = cv2.VideoWriter(fname_r, fourcc, 20.0, (640, 480))
+            fname_r = f"right_{FileName}.avi"
+            out_r = cv2.VideoWriter(fname_r, fourcc, self.FPS, self.size)
 
-            while self.get_recording_state():
+            self.cam_left.start()
+            self.cam_right.start()
 
+            while True:
+                print("Exit :",self.exit)
                 if self.exit:
+                    print('Ending recording...')
                     break
+
+                frame_l = self.cam_left.capture_array()
+                frame_r = self.cam_right.capture_array()
+
+                out_r.write(frame_r)
+                out_l.write(frame_l)
             
                 # img = self.camera.getImageArray()
                 # img = np.asarray(img, dtype=np.uint8)
@@ -194,43 +235,26 @@ class Camera(object):
                 # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
                 # img = cv2.flip(img, 1)
 
-                status_l,frame_left = cam_left.read()
-                cv2.imshow('left', frame_left)
-                out_l.write(frame_left)
-
-                if sterio:
-                    status_r,frame_right = cam_right.read()
-                    out_l.write(frame_right)
-                    cv2.imshow('right', frame_right)
-                    
-                # Wait for 'a' key to stop the program
-                if cv2.waitKey(1) & 0xFF == ord('a'):
-                    break
-            print('Ending recording...')
-            cam_left.release()
+            self.cam_left.stop()
+            self.cam_right.stop()
+          
             out_l.release()
+            out_r.release()
 
-            if not sterio:
-                self.set_state(False,{
-                                        'state':True,
-                                        'fname':fname_l
-                                    })
-            else:
-                cam_right.release()
-                out_r.release()
-                self.set_state(False,{
-                                        'state':True,
-                                        'fname':fname_l
-                                    },
+            self.cam_left.close()
+            self.cam_right.close()
+                
+
+            self.set_state({'state':True,
+                             'fname':fname_l},
                                     {
                                         'state':True,
                                         'fname':fname_r
                                     })
+            self.state['record'] = False
 
         except Exception as e:
             print("ERROR :",e)
-
-        cv2.destroyAllWindows()
 
     def get_recorded_file(self,sterio=STERIO):
         if not sterio:
@@ -240,6 +264,7 @@ class Camera(object):
 
     def get_recording(self,sterio=STERIO):
         rec_file_name = self.get_recorded_file()
+        print("Rec file :",rec_file_name)
         if not rec_file_name:
             return None,"No recording exits!"
     
@@ -249,7 +274,7 @@ class Camera(object):
             return ((rec_file_name,rec_l),), None
         
         with open(rec_file_name[0], 'rb') as video:
-                rec_l = video.read()
+            rec_l = video.read()
         
         with open(rec_file_name[1], 'rb') as video:
             rec_r = video.read()
@@ -324,7 +349,7 @@ class Camera(object):
 
 
 def main():
-    camera_server = Connection("localhost",8000)
+    camera_server = Connection()
     camera= Camera()
 
     try:
@@ -360,14 +385,11 @@ def main():
                 except Exception as e:
                     raise e
             elif data['get_recording']:
-                recordings,error = camera.get_recording()
-
-                if recording_status or error:
-                    if recording_status:
-                        error = "Can't send recording while camera is in recording state! Stop the recording first!"
-                
+                if recording_status:
+                    error = "Can't send recording while camera is in recording state! Stop the recording first!"
                     camera_server.send("Error!",error=error)
                 else:
+                    recordings,error = camera.get_recording()
                     camera_server.send("Recordings",data=recordings)
 
             elif data['exit']:

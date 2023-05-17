@@ -3,6 +3,7 @@ from rclpy.node import Node
 from mirs_interfaces.msg import VoiceState, SystemState, TaskExecutorState, TaskRecorderState, TaskExtractorState
 from .conf.topics import TOPICS
 from .conf.states import States
+from .conf.commands import COMMANDS
 import uuid
   
 class Command:
@@ -15,11 +16,12 @@ class System(Node):
         super().__init__("System")
 
         self.state = {
-            "status": States.INACTIVE,
+            "status": States.RECORDED,
             "error": '',
             "message": '',
             "command": '',
-            "recording": '',
+            "recording": [r"C:\Chethan\Mechanical\projects\Major_Project\software\MIRS\mirs\src\mirs_system\mirs_system\ai\vision\camera\recordings\left_1684305050.avi",
+                         r"C:\Chethan\Mechanical\projects\Major_Project\software\MIRS\mirs\src\mirs_system\mirs_system\ai\vision\camera\recordings\right_1684305050.avi"],
             "tasks": []
         }
         self.state_queue = []
@@ -111,9 +113,20 @@ class System(Node):
         self.command_queue.append(command)
         self.get_logger().info("Got command : "+command)
 
+    def is_previous_command_fullfilled(self,cmd_id):
+        if len(self.pre_command_processed)>0:
+            if self.pre_command_processed[-1]==cmd_id:
+                return True
+        return False
+
     def publish_system_state(self):
         # Check wether previous command processed or not 
         # if processed then continue with new command else publish old command itself
+        fullfilled = None
+
+        if self.state['command']:
+            fullfilled = self.is_previous_command_fullfilled(self.state['command'].id)
+
         if(len(self.command_queue)>0):
             # No previous command present
             if not self.state['command']:
@@ -121,15 +134,15 @@ class System(Node):
                 self.get_logger().info("Setting first command : "+command)
                 self.state['command'] = Command(command)
 
-            #Previous command processed continue with new one
-            elif self.state['command'] and (self.pre_command_processed[-1]==self.state['command'].id):
+            #if previous command processed continue with new one
+            elif self.state['command'] and fullfilled:
                 command = self.command_queue.pop(0)
                 self.get_logger().info("Setting new command : "+command)
                 self.state['command'] = Command(command)
         
         else:
-            # No new command clear old command
-            if(self.state['command'] and (self.pre_command_processed[-1]==self.state['command'].id)):
+            # No new command clear old command if processed
+            if fullfilled:
                 self.get_logger().info("Clearing old command...")
                 self.state['command'] = ''
 
@@ -157,6 +170,11 @@ class System(Node):
         self.get_logger().info(log)
 
         self.system_state_publisher.publish(msg)
+
+        if msg.command == COMMANDS.EXIT:
+            self.destroy_node()
+            rclpy.shutdown()
+            exit(0)
         self.clear_data()
 
 
@@ -167,7 +185,7 @@ class System(Node):
         self.state['error'] = ''
 
 
-    def set_state(self, status='', recording='', error='', message='', tasks=[]):
+    def set_state(self, status='', recording=[], error='', message='', tasks=[]):
         if not status:
             self.state_queue.append((self.get_status(),recording,error,message,tasks))
         else:

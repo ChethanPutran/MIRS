@@ -16,7 +16,7 @@ class TaskRecorder(Node):
         self.state = {
             'status': '',
             'message': '',
-            'recording': None,
+            'recording': [],
             'error': None
         }
         self.connected = False
@@ -43,7 +43,7 @@ class TaskRecorder(Node):
             self.connected = True
             self.set_state(States.ACTIVE, message="Connected to camera!")
         except Exception as e:
-            self.set_state(States.ERROR, error="Could not connect to camera! Camera is offline. Trying to reconnect in 3s...")
+            self.set_state(States.ERROR, error="Could not connect to camera! Camera is offline. Trying to reconnect in 3 seconds.")
             time.sleep(3)
             self.connect()
 
@@ -67,7 +67,7 @@ class TaskRecorder(Node):
         self.state['error'] = ''
         self.state['message'] = ''
 
-    def set_state(self, status='', message='', recording='', error='',command_id=''):
+    def set_state(self, status='', message='', recording=[], error='',command_id=''):
         if status:
             self.state['status'] = status
         self.state['recording'] = recording
@@ -117,23 +117,26 @@ class TaskRecorder(Node):
             res = self.camera_client.end_recording()
 
             if res['error']:
-                self.get_logger().info((res["error"]))
+                self.get_logger().info("ERROR : "+res["error"])
                 self.set_state(States.ERROR,command_id=msg.command_id, error=res['error'])
             else:
-                self.get_logger().info(res["message"])
-                self.set_state(States.RECORDED,command_id=msg.command_id, message=res['message'])
+                self.set_state(States.RECIEVE_RECORDING,command_id=msg.command_id, message=res["message"]+" Recieving recording from server. It may take few minutes!")
+                self.get_logger().info("Getting recording from server...")
+                recording, error = self.camera_client.get_recording()
 
-        elif msg.command == COMMANDS.GET_RECORDING:
-            recording, error = self.camera_client.get_recording()
-            print(" Get recording err", error)
+                if error:
+                    self.get_logger().info(error)
+                    self.set_state(error=error,command_id=msg.command_id,)
+                else:
+                    self.get_logger().info("Got recording.") 
+                    self.get_logger().info(res["message"])
+                    self.set_state(States.RECORDED,command_id=msg.command_id, message="Recording recieved. Waiting for the command to process.",recording=recording)
+        elif msg.command == COMMANDS.EXIT:
+            self.destroy_node()
+            rclpy.shutdown()
+            exit(0)
 
-            if error:
-                self.get_logger().info(error)
-                self.set_state(error=error,command_id=msg.command_id,)
-            else:
-                self.set_state(States.RECIEVE_RECORING,command_id=msg.command_id, recording=recording)
-
-
+            
 def main(args=None):
     recorder_node = None
     try:

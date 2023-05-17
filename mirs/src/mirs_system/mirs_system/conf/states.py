@@ -12,7 +12,7 @@ class States:
     # Recorder
     RECORDING = 'recording'
     RECORDED = 'recorded'
-    RECIEVE_RECORING = 'recieve_recording'
+    RECIEVE_RECORDING = 'recieve_recording'
 
     # Executor
     EXECUTING = "executing"
@@ -22,3 +22,7 @@ class States:
     EXTRACTED = 'extracted'
     EXTRACTING = 'extracting'
     RECIEVE_TASKS = 'recieve_tasks'
+
+
+    PAUSE = 'pause'
+    RESUME = 'resume'

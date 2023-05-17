@@ -6,9 +6,9 @@ import cv2
 import threading
 import time
 
-STERIO = False
+STERIO = True
 RECORDING_DIR = 'recordings'
-DEBUG = False
+DEBUG = True
 
 class CameraClient:
     def __init__(self,host='raspberrypi.local',port=8000):

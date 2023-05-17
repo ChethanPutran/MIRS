@@ -16,6 +16,7 @@ class VoiceInput(Node):
         self.command = ''
         self.error = ''
         self.sys_state = ''
+        self.sys_command = ''
         self.recognizer = sr.Recognizer()
         self.voice_pub_period = 2 #sec
         self.listening_period = 10 #sec
@@ -33,6 +34,11 @@ class VoiceInput(Node):
     
     def sys_state_callback(self,msg:SystemState):
         self.sys_state = msg.status
+
+        if msg.command == COMMANDS.EXIT:
+            self.destroy_node()
+            rclpy.shutdown()
+            exit(0)
         
 
     def publish_voice_state(self):
@@ -55,16 +61,17 @@ class VoiceInput(Node):
     
         self.get_logger().info("New command : "+command+". Sys State :"+self.sys_state)
 
-        if (self.sys_state == States.EXTRACTING):
+      
+        if('pause' in command):
+            command = COMMANDS.PAUSE
+        elif((self.sys_state == States.PAUSE) and 'resume' in command):
+            command = COMMANDS.RESUME
+
+        elif (self.sys_state == States.EXTRACTING) or (self.sys_state == States.EXECUTING):
             error = f"Can not execute command '{command}' while system processing the recording!"
-        elif self.sys_state == States.EXECUTING:
-            if (command != COMMANDS.PAUSE):
-                error = f"Can not execute the command '{command}' while system executing the task!"
-            else:
-                command = COMMANDS.PAUSE
 
         elif (self.sys_state == States.RECORDING):
-            if ('record' in command) and ('end' in command):
+            if ('record' in command) and ('stop' in command):
                 command = COMMANDS.END_RECORD
             else:
                 error = f"Can not execute the command '{command}' while system recording the task!"

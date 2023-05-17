@@ -8,3 +8,4 @@ class COMMANDS:
     SPEAK = "speak"
     EXIT = "exit"
     PAUSE = "pause"
+    RESUME = "resume"

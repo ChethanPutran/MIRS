@@ -3,6 +3,7 @@ import datetime
 import pyttsx3 as ts
 from  mirs_interfaces.msg import SystemState
 from  mirs_system.conf.topics import TOPICS
+from  mirs_system.conf.commands import COMMANDS
 import rclpy
 from rclpy.node import Node
 
@@ -11,6 +12,7 @@ class VoiceOutput(Node):
     def __init__(self):
         super().__init__("MIRS_Voice_output")
         self.timer_period = 5
+        self.sys_command = ''
         self.message_queue = []
         self.engine = ts.init()
         self.volume = self.engine.getProperty('volume')
@@ -43,6 +45,11 @@ class VoiceOutput(Node):
         if msg.error:
             tune = 'error'
             data = msg.error
+        
+        if msg.command == COMMANDS.EXIT:
+            self.destroy_node()
+            rclpy.shutdown()
+            exit(0)
         
         self.message_queue.append((data,tune))
 
