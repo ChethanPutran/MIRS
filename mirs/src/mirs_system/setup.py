@@ -30,7 +30,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        "voice = mirs_system.ai.voice.voice:main", 
+        "voice_input = mirs_system.ai.voice.voice_input:main", 
+        "voice_output = mirs_system.ai.voice.voice_output:main", 
         "system = mirs_system.system:main",
         "task_recorder = mirs_system.task_recorder:main",
         "task_extractor = mirs_system.task_extractor:main",

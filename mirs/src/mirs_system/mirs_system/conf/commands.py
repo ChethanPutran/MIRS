@@ -6,3 +6,5 @@ class COMMANDS:
     START_PROCESSING = "start_processing"
     START_EXECUTION = "start_execution"
     SPEAK = "speak"
+    EXIT = "exit"
+    PAUSE = "pause"
