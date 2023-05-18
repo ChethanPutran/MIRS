@@ -4,7 +4,7 @@ import numpy as np
 from mirs_system.ai.task.task import Task
 from mirs_system.ai.vision.estimator.models.action_identifier.model import ActionIdentifierModel
 from mirs_system.ai.vision.estimator.object_identifier import ObjectIdentifier
-# from mirs_system.ai.vision.estimator.object_pose import PoseEstimator
+from mirs_system.ai.vision.estimator.object_pose import PoseEstimator
 from mirs_system.ai.vision.estimator.depth_estimator import CoordinateEstimator
 from mirs_system.ai.vision.estimator.hand_pose import HandPose
 

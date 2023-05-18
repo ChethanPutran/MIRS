@@ -29,7 +29,7 @@ class System(Node):
         self.pre_cmd = ''
         self.command_queue = []
         self.pre_command_processed = []
-        self.publishing_period =2 # s
+        self.publishing_period = 1 # s
 
         self.create_subscription(
             TaskRecorderState, TOPICS.TOPIC_RECORDER_STATUS, self.recorder_callback, 1)
@@ -68,6 +68,7 @@ class System(Node):
 
         self.get_logger().info("Extractor callback :" + msg.status+" :"+(
             msg.mssg if msg.mssg else msg.error))
+
         if msg.status == States.ERROR:
             self.set_state(States.ERROR, error=msg.error)
         elif msg.status == States.EXTRACTING:
@@ -76,9 +77,12 @@ class System(Node):
             self.set_state(States.EXTRACTING, message=msg.mssg)
         elif msg.status == States.EXTRACTED:
             self.set_state(States.DONE, tasks=msg.tasks)
-            print("Got tasks ", msg.tasks)
+            self.get_logger().info("Got tasks")
         elif msg.mssg:
-            self.set_state(self.get_status(), message=msg.mssg)
+          self.set_state(self.get_status(), message=msg.mssg)
+
+    def clear_recording(self):
+        self.state['recording'].clear()
 
     def executor_callback(self, msg:TaskExecutorState):
         if msg.command_id:
@@ -151,7 +155,13 @@ class System(Node):
             #Update state
             self.get_logger().info("Updating new state...")
             state = self.state_queue.pop(0)
-            self.state['status'],self.state['recording'],self.state['error'],self.state['message'],self.state['tasks'] = state
+            self.state['status'],recs,self.state['error'],self.state['message'],tasks= state
+
+            if len(recs)>0:
+                self.state['recording'] = recs
+            if len(tasks)>0:
+                self.state['tasks'] = tasks
+            
 
         # Get input from user
         msg = SystemState()
@@ -166,7 +176,7 @@ class System(Node):
             msg.command_id = self.state['command'].id
         
 
-        log = f"Sys state : {self.state['status']} : {self.state['error'] if self.state['error'] else self.state['message']} Command :{msg.command}"
+        log = f"Sys state : {self.state['status']} : Len(RECS) :{len(msg.recording)}"
         self.get_logger().info(log)
 
         self.system_state_publisher.publish(msg)
@@ -175,6 +185,7 @@ class System(Node):
             self.destroy_node()
             rclpy.shutdown()
             exit(0)
+
         self.clear_data()
 
 

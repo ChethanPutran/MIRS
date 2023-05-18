@@ -1,32 +1,29 @@
-#! /usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 from .conf.topics import TOPICS
-from .conf.services import SERVICES
 from .conf.states import States
 from .conf.commands import COMMANDS
-from mirs_interfaces.msg import TaskExtractorState, SystemState, Task
-import time
-# from .ai.task.extractor import Extractor
+from mirs_interfaces.msg import TaskExtractorState, SystemState,Tasks,Task
+from .ai.extractor import Extractor
 
 
 class TaskExtractor(Node):
-    def __init__(self, time_period=3):
+    def __init__(self, time_period=1):
         super().__init__('TaskExtractor')
-        self.tasks = []
         self.TIME_PERIOD = time_period
+        self.extractor_commands = [COMMANDS.START_PROCESSING,COMMANDS.PAUSE,COMMANDS.RESUME,COMMANDS.EXIT]
         self.state = {
-            'status': '',
+            'status': States.INACTIVE,
             'tasks': [],
             'error': '',
             'message': '',
+            'command_id':''
         }
-        # self.task_extractor = Extractor()
+        self.recording = []
+        self.task_extractor = Extractor()
 
         self.create_subscription(
-            SystemState, TOPICS.TOPIC_SYSTEM_STATE, self.extract_tasks, 1)
+            SystemState, TOPICS.TOPIC_SYSTEM_STATE, self.sys_state_callback, 1)
 
         self.task_extraction_status_publisher = self.create_publisher(
             TaskExtractorState, TOPICS.TOPIC_EXTRACTOR_STATUS, 1)
@@ -34,12 +31,12 @@ class TaskExtractor(Node):
         self.timer = self.create_timer(
             self.TIME_PERIOD, self.publish_extractor_status)
 
-        self.set_state(States.INACTIVE)
 
-    def set_state(self, status, tasks=[], error='', message=''):
+    def set_state(self, status, tasks=[], error='', message='',command_id=''):
         self.state['status'] = status
         self.state['error'] = error
         self.state['message'] = message
+        self.state['command_id'] = command_id
 
         if tasks:
             self.state['tasks'] = tasks
@@ -56,49 +53,73 @@ class TaskExtractor(Node):
         msg.status = self.state['status']
         msg.tasks = self.state['tasks']
         msg.error = self.state['error']
-        msg.message = self.state['message']
+        msg.mssg = self.state['message']
+        msg.command_id = self.state['command_id']
         self.task_extraction_status_publisher.publish(msg)
+        self.clear_data()
+
+    def clear_data(self):
+        if self.state['status'] == States.ERROR:
+            self.set_state(States.ACTIVE)
+        self.state['error'] = ''
+        self.state['message'] = ''
 
     def is_present_tasks(self):
         return len(self.state['tasks'])
 
     def clear_tasks(self):
-        self.state['tasks'] = []
+        self.state['tasks'].clear()
 
-    def extract_tasks(self, msg):
-        if (msg.status == States.DONE) and self.is_present_tasks():
-            self.clear_tasks()
-            self.set_state(States.INACTIVE)
+    def check_recordings_exist(self):
+        return len(self.recording)>0
 
-        self.get_logger().info('Command :'+msg.command)
-        if not (msg.command == COMMANDS.START_PROCESSING):
+    def sys_state_callback(self, msg:SystemState):
+        if msg.command not in self.extractor_commands:
             return
-        print("Extracting")
-        recording = msg.recording
+        
+        if( msg.command == COMMANDS.START_PROCESSING) and (self.state['status'] == States.EXTRACTING):
+            self.set_state(States.EXTRACTING,message="System is already extracting the tasks! Kindly wait for some minutes.",command_id=msg.command_id)
+        
+        elif msg.command == COMMANDS.START_PROCESSING:
+            if len(msg.recording)>0:
+                self.recording = msg.recording
+                # Start processing
+                self.set_state(States.EXTRACTING,message="Task extraction processed has been  started.",command_id=msg.command_id)
+                self.get_logger().info('Extraction started...')
 
-        self.set_state(States.EXTRACTING)
+                success, task_queue, error = self.task_extractor.extract(self.recording)
 
-        # success, task_queue, error = self.task_extractor.extract(recording)
+                tasks_msg = Tasks()
 
-        t1 = Task()
-        t1.action = 'pick'
-        t2 = Task()
-        t2.action = 'move'
-        t3 = Task()
-        t3.action = 'place'
+                for task in task_queue:
+                    tsk = Task()
+                    tsk.action = task.action
+                    tsk.object = task.object
+                    tsk.initial_theta = task.initial_theta
+                    tsk.initial_pos = task.initial_pos
+                    tsk.final_pos = task.final_pos
+                    tsk.final_theta = task.final_theta
+                    tasks_msg.tasks.append(tsk)
 
-        success, task_queue, error = True, [t1, t2, t3], None
 
-        self.get_clock().sleep_for(rel_time=time.se)
+                # if successfull
+                if success:
+                    self.set_state(States.EXTRACTED,tasks= tasks_msg,command_id=msg.command_id,message="Task sucessfully extracted.")
 
-        # if successfull
-        if success:
-            self.set_state(States.EXTRACTED, task_queue)
-            self.tasks = task_queue
+                # if failure
+                else:
+                    self.set_state(States.ERROR, error=error,command_id=msg.command_id)
+                    self.clear_tasks()
+            else:
+                self.set_state(States.ERROR,error="No recording found to process!",command_id=msg.command_id)
 
-        # if failure
+        elif msg.command == COMMANDS.EXIT:
+            self.destroy_node()
+            rclpy.shutdown()
+            exit(0)
         else:
-            self.set_state(States.ERROR, error=error)
+            # Implement pause 
+            self.get_logger().info("Pausing...")
 
 
 def main(args=None):

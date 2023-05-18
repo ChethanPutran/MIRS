@@ -1,9 +1,6 @@
-#! /usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 from .conf.topics import TOPICS
-from .conf.services import SERVICES
 from mirs_interfaces.msg import TaskExecutorState, Task,RobotState, SystemState
 from mirs_system.ai.task.task import Task
 from mirs_system.conf.commands import COMMANDS
