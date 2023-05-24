@@ -1,15 +1,24 @@
 import os
 import cv2
 import glob
+import random
 import matplotlib.pyplot as plt
+import numpy as np
 from mirs_system.ai.vision.estimator.object_identifier import ObjectIdentifier
-from mirs_system.ai.vision.estimator.models.action_identifier.model import ActionIdentifierModel
+from mirs_system.ai.vision.estimator.hand_pose import HandPose
 
 
-test_video_folder = os.path.join(os.path.dirname(__file__),'videos')
+TEST_VIDEOS = glob.glob(os.path.join(os.path.join(os.path.dirname(__file__),'videos',"*.mp4")))
 
-TEST_VIDEO = [os.path.join(test_video_folder,"box_left.avi"),os.path.join(test_video_folder,"box_right.avi")]
 
+def get_random_test_video():
+    pth = random.sample(TEST_VIDEOS,1)[0]
+    if 'left' in pth:
+        pth_right = pth.replace("left","right")
+        return (pth,pth_right)
+    else:
+        pth_left = pth.replace("right","left")
+        return (pth_left,pth)
 
 win_titles = ['original_left',
               'original_right',
@@ -22,8 +31,9 @@ def obj_ientifier_test():
 
     count = 0
 
-    cap_left = cv2.VideoCapture(TEST_VIDEO[0])
-    cap_right = cv2.VideoCapture(TEST_VIDEO[1])
+    test_video = get_random_test_video()
+    cap_left = cv2.VideoCapture(test_video[0])
+    cap_right = cv2.VideoCapture(test_video[1])
 
     while True:
         print("New img")
@@ -45,62 +55,58 @@ def obj_ientifier_test():
     cap_left.release()
     cap_right.release()
 
-def action_identifier_test():
-    action_identifier = ActionIdentifierModel()
-
-    count = 0
-
-    cap_left = cv2.VideoCapture(TEST_VIDEO[0])
-
-
-    frame_group = []
-    group_size = 0
-    count = 0
-    SKIP = 4
 
     
-    video_frames_count = int(cap_left.get(cv2.CAP_PROP_FRAME_COUNT))
+
+def extract():
+
+    test_video = get_random_test_video()
+
+    hand_pose_estimator = HandPose()
+
+    video_left = cv2.VideoCapture(test_video[0])
+    video_right = cv2.VideoCapture(test_video[1])
+
+
+    video_frames_count = min(int(video_left.get(cv2.CAP_PROP_FRAME_COUNT)),int(video_right.get(cv2.CAP_PROP_FRAME_COUNT)))
+    
+    count = 0
+    FRAMES_REQUIRED = 30
+    SKIP = video_frames_count//FRAMES_REQUIRED
+
+
+    print(video_frames_count,SKIP)
+
+    hand_poses = []
+
 
     while True:
-        check1, frame = cap_left.read()
+        check1, frame_l = video_left.read()
+        check2, frame_r = video_right.read()
 
-        count += SKIP
-        cap_left.set(cv2.CAP_PROP_POS_FRAMES, count)
-
-        if not check1:
-            print("Recording processed sucessfully.")
+        if not(check1) or  not(check2):
             break
-
-        if (group_size < action_identifier.SEQ_LEN):
-            group_size += 1
-            frame_group.append(frame)
-            continue
-
-  
-        group_size = 0
-
-        for frame in frame_group:
-            cv2.imshow("Video",frame)
-
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
-
-        # Frame group full (extract task)
-        action = action_identifier.predict(frame_group)
         
-        print("Identified Action : ",action)
+        if SKIP:
+            count+=SKIP
 
-        # CLear frame group
-        frame_group.clear()
+            video_left.set(cv2.CAP_PROP_POS_FRAMES, count)
+            video_right.set(cv2.CAP_PROP_POS_FRAMES, count)
 
+        hand_pose = hand_pose_estimator.get_pose_3D(frame_l,frame_r,visualize=True)
+        hand_poses.append(hand_pose)
 
-    cap_left.release()
+    video_left.release()
+    video_right.release()
+    
+
+    print("Pose : ",hand_poses)
+
     cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
     #obj_ientifier_test()
-    action_identifier_test()
+    extract()
 
 
 # ex = Extractor()

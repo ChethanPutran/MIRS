@@ -14,7 +14,7 @@ HEIGHT = Calibration.HEIGHT
 # K_right,dist_r,R_right,t_right= Calibration.load_camera_params(right_cam=True)
 K_left,dist_l,R_right,dist_r,R_LR,T_LR = Calibration.load_stereo_params()
 
-class CoordinateEstimator:
+class DepthEstimator:
     def __init__(self, num_disparities=7*16,
                  block_size=11,
                  min_disparity=0,

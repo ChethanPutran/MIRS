@@ -32,3 +32,17 @@ https://www.mathworks.com/help/robotics/ug/simulate-joint-space-trajectory-track
 
 
 https://articulatedrobotics.xyz/ready-for-ros-8-gazebo/
+
+### Ultralytics YOLOv8
+https://www.freecodecamp.org/news/how-to-detect-objects-in-images-using-yolov8/
+
+
+
+## Interfacing MPU-6050 to Raspberry pi
+https://circuitdigest.com/microcontroller-projects/mpu6050-gyro-sensor-interfacing-with-raspberry-pi
+
+
+
+# Robot Maker
+
+https://www.roboticslibrary.org/tutorials/create-a-robot-model/

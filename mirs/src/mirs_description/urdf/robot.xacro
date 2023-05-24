@@ -1,0 +1,457 @@
+<?xml version="1.0" ?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find mirs_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find mirs_description)/urdf/robot.trans" />
+<xacro:include filename="$(find mirs_description)/urdf/robot.gazebo" />
+  <link name="world"></link>
+
+  <joint name="base_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="world" />
+    <child link="base_link" />
+  </joint>
+
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.00011256906932755121 1.4557633150903527e-06 0.05611303672311459" rpy="0 0 0"/>
+    <mass value="0.7607953823190714"/>
+    <inertia ixx="0.00209" iyy="0.002086" izz="0.001141" ixy="-0.0" iyz="0.0" ixz="3e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="link1_1">
+  <inertial>
+    <origin xyz="-2.18077026219447e-05 -0.008667116044570888 0.07341511445210697" rpy="0 0 0"/>
+    <mass value="0.36362432790840626"/>
+    <inertia ixx="0.000817" iyy="0.000637" izz="0.000388" ixy="-0.0" iyz="8.7e-05" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 0.0 -0.118809" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 0.0 -0.118809" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="link2_1">
+  <inertial>
+    <origin xyz="-3.603644633958681e-05 -0.0271995322898241 0.10282542590681568" rpy="0 0 0"/>
+    <mass value="0.3021556727762819"/>
+    <inertia ixx="0.002532" iyy="0.002441" izz="0.000237" ixy="0.0" iyz="1.7e-05" ixz="-1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0 0.054 -0.22" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0 0.054 -0.22" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="link3_1">
+  <inertial>
+    <origin xyz="6.264897081464937e-07 0.04278941819318842 0.02522849010117617" rpy="0 0 0"/>
+    <mass value="0.2069537615720799"/>
+    <inertia ixx="0.000337" iyy="0.000259" izz="0.000152" ixy="0.0" iyz="-5.5e-05" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 0.036 -0.42" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 0.036 -0.42" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="link4_1">
+  <inertial>
+    <origin xyz="-0.0016735155052133167 0.00029506558559069807 0.016813359980829" rpy="0 0 0"/>
+    <mass value="0.16008099380024673"/>
+    <inertia ixx="0.000184" iyy="0.000201" izz="8.4e-05" ixy="1e-06" iyz="0.0" ixz="6e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0 -0.01749 -0.506" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link4_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0 -0.01749 -0.506" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link4_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="link5_1">
+  <inertial>
+    <origin xyz="0.019312062423737834 -0.002257603554374545 0.01553837860820173" rpy="0 0 0"/>
+    <mass value="0.10191756419918718"/>
+    <inertia ixx="7.3e-05" iyy="6.2e-05" izz="3.2e-05" ixy="0.0" iyz="4e-06" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0195 -0.01749 -0.56275" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link5_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0195 -0.01749 -0.56275" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/link5_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="pam_1">
+  <inertial>
+    <origin xyz="-0.03189057659375571 0.009631237286823465 0.014184975927230337" rpy="0 0 0"/>
+    <mass value="0.06897532380525866"/>
+    <inertia ixx="2.6e-05" iyy="4.2e-05" izz="4.2e-05" ixy="1e-06" iyz="-0.0" ixz="1.6e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0 -0.00749 -0.611" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/pam_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0 -0.00749 -0.611" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/pam_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="fl_link2_1">
+  <inertial>
+    <origin xyz="-0.0027998863670756075 0.001148336261687909 0.01630444609534587" rpy="0 0 0"/>
+    <mass value="0.0051329786794806365"/>
+    <inertia ixx="1e-06" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.063169 0.00475 -0.693878" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fl_link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.063169 0.00475 -0.693878" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fl_link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="fr_link1_1">
+  <inertial>
+    <origin xyz="-0.005584225135775174 -0.0011284664599334115 0.013722938080030334" rpy="0 0 0"/>
+    <mass value="0.006343669280929142"/>
+    <inertia ixx="1e-06" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.055641 1e-05 -0.667525" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fr_link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.055641 1e-05 -0.667525" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fr_link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="fl_link1_1">
+  <inertial>
+    <origin xyz="-0.005447369415157506 -0.0014602130819652837 0.013336284720487313" rpy="0 0 0"/>
+    <mass value="0.006328018957291146"/>
+    <inertia ixx="1e-06" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.062227 -0.03499 -0.666093" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fl_link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.062227 -0.03499 -0.666093" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fl_link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="ft_link2_1">
+  <inertial>
+    <origin xyz="-0.00923956263793349 -0.0015694981576473595 0.01344870229966022" rpy="0 0 0"/>
+    <mass value="0.0051281375109276115"/>
+    <inertia ixx="0.0" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.072494 -0.032298 -0.691462" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/ft_link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.072494 -0.032298 -0.691462" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/ft_link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="fr_link0_1">
+  <inertial>
+    <origin xyz="-0.0032299975948286153 -6.395383441576419e-08 0.00787574577875183" rpy="0 0 0"/>
+    <mass value="0.022649680775991478"/>
+    <inertia ixx="2e-06" iyy="2e-06" izz="1e-06" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.056599 -0.03499 -0.652189" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fr_link0_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.056599 -0.03499 -0.652189" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fr_link0_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="fl_link0_1">
+  <inertial>
+    <origin xyz="-0.0013642649018060435 5.273055224677142e-09 0.008402917907270546" rpy="0 0 0"/>
+    <mass value="0.0226514531962302"/>
+    <inertia ixx="2e-06" iyy="2e-06" izz="1e-06" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.056599 1e-05 -0.652189" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fl_link0_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.056599 1e-05 -0.652189" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fl_link0_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="ft_link0_1">
+  <inertial>
+    <origin xyz="0.008849407802677435 -1.66350876299598e-05 0.010295330470150743" rpy="0 0 0"/>
+    <mass value="0.005909401394750698"/>
+    <inertia ixx="0.0" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.005745 -0.01749 -0.628598" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/ft_link0_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.005745 -0.01749 -0.628598" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/ft_link0_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="ft_link1_1">
+  <inertial>
+    <origin xyz="0.008133813658864484 -7.426857261188038e-05 0.0058763093867056915" rpy="0 0 0"/>
+    <mass value="0.0047774913477992955"/>
+    <inertia ixx="0.0" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.017743 -0.01749 -0.64048" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/ft_link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.017743 -0.01749 -0.64048" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/ft_link1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="fr_link2_1">
+  <inertial>
+    <origin xyz="0.014848002569212877 2.525908720865666e-06 0.006944463822076585" rpy="0 0 0"/>
+    <mass value="0.0051281375952932085"/>
+    <inertia ixx="0.0" iyy="1e-06" izz="0.0" ixy="-0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.035686 -0.017425 -0.653209" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fr_link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.035686 -0.017425 -0.653209" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://mirs_description/meshes/fr_link2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="joint1" type="continuous">
+  <origin xyz="0.0 0.0 0.118809" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="link1_1"/>
+  <axis xyz="-0.0 0.0 -1.0"/>
+</joint>
+
+<joint name="joint2" type="continuous">
+  <origin xyz="-0.0 -0.054 0.101191" rpy="0 0 0"/>
+  <parent link="link1_1"/>
+  <child link="link2_1"/>
+  <axis xyz="0.0 1.0 -0.0"/>
+</joint>
+
+<joint name="joint3" type="continuous">
+  <origin xyz="0.0 0.018 0.2" rpy="0 0 0"/>
+  <parent link="link2_1"/>
+  <child link="link3_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="joint4" type="continuous">
+  <origin xyz="-0.0 0.05349 0.086" rpy="0 0 0"/>
+  <parent link="link3_1"/>
+  <child link="link4_1"/>
+  <axis xyz="-0.0 -0.0 -1.0"/>
+</joint>
+
+<joint name="joint5" type="continuous">
+  <origin xyz="-0.0195 0.0 0.05675" rpy="0 0 0"/>
+  <parent link="link4_1"/>
+  <child link="link5_1"/>
+  <axis xyz="1.0 0.0 -0.0"/>
+</joint>
+
+<joint name="joint6" type="continuous">
+  <origin xyz="0.0195 -0.01 0.04825" rpy="0 0 0"/>
+  <parent link="link5_1"/>
+  <child link="pam_1"/>
+  <axis xyz="-0.0 1.0 -0.0"/>
+</joint>
+
+<joint name="fl_joint2" type="continuous">
+  <origin xyz="-0.007528 -0.00474 0.026353" rpy="0 0 0"/>
+  <parent link="fr_link1_1"/>
+  <child link="fl_link2_1"/>
+  <axis xyz="0.012725 -0.996653 -0.080753"/>
+</joint>
+
+<joint name="fl_joint1" type="continuous">
+  <origin xyz="0.000958 0.0 0.015336" rpy="0 0 0"/>
+  <parent link="fl_link0_1"/>
+  <child link="fr_link1_1"/>
+  <axis xyz="-0.98781 -0.0 -0.155664"/>
+</joint>
+
+<joint name="fr_joint1" type="continuous">
+  <origin xyz="-0.005628 0.0 0.013904" rpy="0 0 0"/>
+  <parent link="fr_link0_1"/>
+  <child link="fl_link1_1"/>
+  <axis xyz="-0.926954 -0.0 -0.375175"/>
+</joint>
+
+<joint name="fr_joint2" type="continuous">
+  <origin xyz="-0.010267 -0.002692 0.025369" rpy="0 0 0"/>
+  <parent link="fl_link1_1"/>
+  <child link="ft_link2_1"/>
+  <axis xyz="-0.036721 0.995198 0.090728"/>
+</joint>
+
+<joint name="fr_joint0" type="continuous">
+  <origin xyz="-0.056599 0.0275 0.041189" rpy="0 0 0"/>
+  <parent link="pam_1"/>
+  <child link="fr_link0_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="fl_joint0" type="continuous">
+  <origin xyz="-0.056599 -0.0075 0.041189" rpy="0 0 0"/>
+  <parent link="pam_1"/>
+  <child link="fl_link0_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="ft_joint0" type="continuous">
+  <origin xyz="-0.005745 0.01 0.017598" rpy="0 0 0"/>
+  <parent link="pam_1"/>
+  <child link="ft_link0_1"/>
+  <axis xyz="-0.588416 -0.0 -0.808558"/>
+</joint>
+
+<joint name="ft_joint1" type="continuous">
+  <origin xyz="0.023488 0.0 0.011882" rpy="0 0 0"/>
+  <parent link="ft_link0_1"/>
+  <child link="ft_link1_1"/>
+  <axis xyz="-0.0 1.0 -0.0"/>
+</joint>
+
+<joint name="ft_joint2" type="continuous">
+  <origin xyz="0.017943 -6.5e-05 0.012729" rpy="0 0 0"/>
+  <parent link="ft_link1_1"/>
+  <child link="fr_link2_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+</robot>

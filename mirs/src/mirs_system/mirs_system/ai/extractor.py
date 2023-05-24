@@ -2,10 +2,11 @@ import os
 import cv2
 import numpy as np
 from mirs_system.ai.task.task import Task
-from mirs_system.ai.vision.estimator.models.action_identifier.model import ActionIdentifierModel
+from mirs_system.ai.vision.estimator.models.action_identifier.model import ActionIdentifier
 from mirs_system.ai.vision.estimator.object_identifier import ObjectIdentifier
-from mirs_system.ai.vision.estimator.object_pose import PoseEstimator
-from mirs_system.ai.vision.estimator.depth_estimator import CoordinateEstimator
+from mirs_system.ai.vision.estimator.depth_estimator import DepthEstimator
+from mirs_system.ai.vision.camera.parameters import FOV_H,FOV_V,T_0_cam
+# from mirs_system.ai.vision.estimator.object_pose import PoseEstimator
 from mirs_system.ai.vision.estimator.hand_pose import HandPose
 
 
@@ -16,11 +17,11 @@ class Extractor:
     def __init__(self):
         self.task_queue = []
         
-        self.action_identifier = ActionIdentifierModel()
+        self.action_identifier = ActionIdentifier()
         # self.object_pose_identifier = PoseEstimator()
         self.object_identifier = ObjectIdentifier()
-        # self.hand_pose_estimator = HandPose()
-        self.coordinate_estimator = CoordinateEstimator()
+        self.hand_pose_estimator = HandPose()
+        self.depth_estimator = DepthEstimator()
         # self.recognition_object = {
         #     'id':0,
         #     'position' : [],
@@ -41,74 +42,93 @@ class Extractor:
         video_left = cv2.VideoCapture(recordings[0])
         video_right = cv2.VideoCapture(recordings[1])
 
-        frame_group = []
-        group_size = 0
-
-        task_object = None
-        found_object = False
-        object_frame = []
+        task_queue = [] 
 
         while True:
-            try:
-                if SINGLE_OBJECT:
-                    check1, frame_left = video_left.read()
-                    check2, frame_right = video_right.read()
+            check1, frame_left = video_left.read()
+            check2, frame_right = video_right.read()
 
-                    if check1 and check2:
-                        print("Recording processed sucessfully.")
-                        break
+            if not(check1) or  not(check2):
+                print("Recording processed sucessfully.")
+                break
 
-                    if (group_size < self.action_identifier.SEQ_LEN):
-                        group_size += 1
-                        frame_group.append((frame_left, frame_right,))
-                        continue
+            task = Task()
+            
 
-                    # Frame group full (extract task)
-                    action = self.action_identifier.predict(frame_group)
+            # Object identification
 
-                    start_frame_l, start_frame_r = frame_group[0]
-                    end_frame_l, end_frame_r = frame_group[-1]
+            # 1. Identify object & it's position in pixel coordinate
+            object_l = self.object_identifier.identify_object(frame_left)
+            object_r = self.object_identifier.identify_object(frame_right)
 
-                    # Assume only single object
-                    if not found_object:
-                        task_object, pos_i, _ = self.object_identifier.identify_object(
-                            start_frame_l)
-                        object_frame = self.object_identifier.get_object_frame()
-                        pos_f = self.object_identifier.get_object_position(
-                            start_frame_l, object_frame)
-                        found_object = True
+            task.set_object(object_l['class_id'])
 
-                    else:
-                        pos_i = self.object_identifier.get_object_position(
-                            start_frame_l, object_frame)
-                        pos_f = self.object_identifier.get_object_position(
-                            start_frame_l, object_frame)
+            # 2. Identify depth of the point and get 3D coordinate
+            x_pixel,y_pixel,z = self.depth_estimator.get_point_depth(frame_left,frame_right,object_l)
 
-                    # obj_initial_pose = self.object_pose_identifier.get_pose(
-                    #     task_object, pos_i, start_frame_l, start_frame_l)
-                    # obj_final_pose = self.object_pose_identifier.get_pose(
-                    #     task_object, pos_f, end_frame_l, end_frame_r)
+            # 2. Trasform pixel coordinate to camera-coordinate
+            x_cam,y_cam,z_cam = x_pixel*FOV_H,y_pixel*FOV_V,z
 
-                    initial_position = self.coordinate_estimator.get_3Dpoint_depth(
-                        start_frame_l, start_frame_r, pos_i)
-                    final_position = self.coordinate_estimator.get_3Dpoint_depth(
-                        end_frame_l, end_frame_r, pos_f)
+            X_cam = np.array([
+                [x_cam],
+                [y_cam],
+                [z_cam],
+                [1]
+                ])
 
-                    # hand_3d_points = self.hand_pose_estimator.extract_3D_keypoints_from_frame(
-                    #     frame_left, frame_right)
+            # 3. Get the object position w.r.to the Robot
+            X_0 = T_0_cam @ X_cam
+            
+            
+            # 4. Save task object position
+            task.set_object_pos(X_0)
 
-                    self.task_queue.append(Task(task_object,
-                                                action,
-                                                initial_position,
-                                                final_position,
-                                                # obj_initial_pose,
-                                                # obj_final_pose,
-                                                # hand_landmarks=hand_3d_points
+            
+            # Compute object pose
+            # obj_initial_pose = self.object_pose_identifier.get_pose(
+            #     task_object, pos_i, start_frame_l, start_frame_l)
+            # obj_final_pose = self.object_pose_identifier.get_pose(
+            #     task_object, pos_f, end_frame_l, end_frame_r)
 
-                                                ))
-                    frame_group.clear()
-                    # Resetting group size
-                    group_size = 0
+            
+            # Hand motion identification
 
-            except Exception as e:
-                raise (False, [], e)
+            # 1. Get hand pose from image
+            #theta , (x_ee_pixel,y_ee_pixel,z_ee_pixel) = self.hand_pose_estimator.get_pose_3D(frame_left,frame_right)
+            theta , (x_ee_pixel,y_ee_pixel) = self.hand_pose_estimator.get_pose(frame_left)
+
+            # 2. Scale hand pose to the meet the hand requirements
+            task.set_hand_theta(theta)
+
+            # 3. Get hand pam start position and consider this as e.e position
+            x_ee_cam,y_ee_cam = x_ee_pixel*FOV_H,y_ee_pixel*FOV_V
+
+            # Compute this
+            z_ee = 1
+
+            X_ee_cam = np.array([
+                [x_ee_cam],
+                [y_ee_cam],
+                [z_ee],
+                [1]
+                ])
+
+            # 3. Get the object position w.r.to the Robot
+            X_ee_0 = T_0_cam @ X_ee_cam
+
+
+            # 4. Save hand starting position as E.E positon
+            task.set_ee_pos(X_ee_0)
+
+            task_queue.append(task)
+
+        video_left.release()
+        video_right.release()
+
+        # Map the hand-ee position to robot-ee frame
+        task_theta = []
+        K = 0.5  # Scaling paramter between real ee and human hand
+        robot_ee = task_theta * K
+
+        return task_queue
+

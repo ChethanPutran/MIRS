@@ -6,3 +6,6 @@ mirs/log
 mirs/install/
 mirs/install
 virtual/
+mirs/src/mirs_system/mirs_system/ai/vision/camera/recordings/
+*.avi
+*.mp4

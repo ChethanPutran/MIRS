@@ -4,30 +4,47 @@ import mediapipe as mp
 import numpy as np
 from mirs_system.ai.vision.calibration.calibration import Calibration
 from .utils import DLT
+import math
 
+
+def distance(point1,point2):
+    # sqrt((x2-x1)**2 + (y2-y1)**2)
+    return math.sqrt((point2[0]-point1[0])**2 + (point2[1]-point1[1])**2)
+        
+def get_theta(point1,point2,point3):
+    a = distance(point1,point2)
+    b = distance(point2,point3)
+    c = distance(point1,point3)
+    
+    # Cosine rule 
+    theta = math.acos((c**2 - b**2 - a**2)/2*a*b)
+
+    return theta
 
 class HandPose:
-    def __init__(self):
+    def __init__(self,three_D=False):
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_hands = mp.solutions.hands
         self.frame_shape = (640, 480)
+
+
         # create hand keypoints detector object.
         self.hand_l = self.mp_hands.Hands(min_detection_confidence=0.5,
-                                          max_num_hands=1, min_tracking_confidence=0.5)
+                                        max_num_hands=1, min_tracking_confidence=0.5)
         self.hand_r = self.mp_hands.Hands(min_detection_confidence=0.5,
-                                          max_num_hands=1, min_tracking_confidence=0.5)
+                                        max_num_hands=1, min_tracking_confidence=0.5)
 
         # projection matrices
         self.P0 , self.P1 = Calibration.get_stereo_projection_matrix()
+
+        self.hand =  self.mp_hands.Hands(min_detection_confidence=0.5,max_num_hands=1, min_tracking_confidence=0.5)
 
     def extract_3D_keypoints(self, frame_l, frame_r):
         # crop to 720x720.
         # Note: camera calibration parameters are set to this resolution.If you change this, make sure to also change camera intrinsic parameters
         if frame_l.shape[1] != 720:
-            frame_l = frame_l[:, self.frame_shape[1]//2 - self.frame_shape[0] //
-                              2:self.frame_shape[1]//2 + self.frame_shape[0]//2]
-            frame_r = frame_r[:, self.frame_shape[1]//2 - self.frame_shape[0] //
-                              2:self.frame_shape[1]//2 + self.frame_shape[0]//2]
+            frame_l = frame_l[:, self.frame_shape[1]//2 - self.frame_shape[0] //2:self.frame_shape[1]//2 + self.frame_shape[0]//2]
+            frame_r = frame_r[:, self.frame_shape[1]//2 - self.frame_shape[0] //2:self.frame_shape[1]//2 + self.frame_shape[0]//2]
 
         # the BGR image to RGB.
         frame_l = cv.cvtColor(frame_l, cv.COLOR_BGR2RGB)
@@ -91,7 +108,7 @@ class HandPose:
         frame_p3ds = np.array(frame_p3ds).reshape((21, 3))
         return frame_p3ds
 
-    def visualize_3d(p3ds):
+    def visualize_3d(self,p3ds):
         """Apply coordinate rotations to point z axis as up"""
         Rz = np.array(([[0., -1., 0.],
                         [1.,  0., 0.],
@@ -155,3 +172,73 @@ class HandPose:
             plt.savefig('figs/fig_' + str(i) + '.png')
             plt.pause(0.01)
             ax.cla()
+
+    def get_fingure_angles(self,keypoints):
+        finger1 = [0,1,2,3]
+        finger2 = [0,5,6,7]
+        finger3 = [0,9,10,11]
+
+        angles = []
+
+        for i in range(2):
+            # For finger 1
+            point11 = keypoints[finger1[i]]
+            point12 = keypoints[finger1[i+1]]
+            point13 = keypoints[finger1[i+2]]
+
+            theta = get_theta(point11,point12,point13)
+            angles.append(theta)
+
+
+        for i in range(2):
+            # For finger 2
+            point21 = keypoints[finger2[i]]
+            point22 = keypoints[finger2[i+1]]
+            point23 = keypoints[finger2[i+2]]
+
+            theta = get_theta(point21,point22,point23)
+            angles.append(theta)
+
+
+        for i in range(2):
+            # For finger 3
+            point31 = keypoints[finger3[i]]
+            point32 = keypoints[finger3[i+1]]
+            point33 = keypoints[finger3[i+2]]
+
+            theta = get_theta(point31,point32,point33)
+            angles.append(theta)
+
+        return angles
+    def get_fingure_angles_3D(self,keypoints):
+        pass
+
+    def get_pose(self,frame):
+        results = self.hand_l.process(frame)
+
+        keypoints = []
+
+        if results.multi_hand_landmarks:
+            for hand_landmarks in results.multi_hand_landmarks:
+                for p in range(21):
+                    pxl_x = int(
+                        round(frame.shape[1]*hand_landmarks.landmark[p].x))
+                    pxl_y = int(
+                        round(frame.shape[0]*hand_landmarks.landmark[p].y))
+                    kpts = (pxl_x, pxl_y)
+                    keypoints.append(kpts)
+
+        theta = self.get_fingure_angles(keypoints)
+        return theta,keypoints[0]
+
+    def get_pose_3D(self,frame_l, frame_r,visualize=False):
+        keypoints_3D = self.extract_3D_keypoints(frame_l, frame_r)
+
+        theta = self.get_fingure_angles_3D(keypoints_3D)
+
+        if visualize:
+            self.visualize_3d(keypoints_3D)
+            
+        return theta,keypoints_3D[0]
+
+   

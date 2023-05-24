@@ -19,4 +19,4 @@ ELSE (
     
 
 call ./install/local_setup.bat
-:: ros2 launch mirs_system robot.launch.py
+:: ros2 launch mirs_description robot.launch.py
