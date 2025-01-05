@@ -1,0 +1,20 @@
+import numpy as np
+
+
+def dynamics_test():
+    from mirs import Transform, RobotModel
+    from dynamics.dynamics import Dynamics
+
+    robot = RobotModel()
+    tf = Transform(robot)
+    dn = Dynamics(tf)
+
+    tau_ee = np.array([0, 0, -10]).reshape(-1, 1)
+    f_ee = np.array([0, -10, 0]).reshape(-1, 1)
+
+    F, Tau = dn.jacobian(f_ee, tau_ee)
+    print(f"F :{F}, Tau :{Tau}")
+
+
+if __name__ == "__main__":
+    dynamics_test()
