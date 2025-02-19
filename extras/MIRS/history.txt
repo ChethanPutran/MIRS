@@ -1,0 +1,4 @@
+goal_x=0.3
+goal_y=0.3
+goal_z=0.3
+goal_t=3.0
