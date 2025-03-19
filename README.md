@@ -25,3 +25,9 @@ Eg.
 > rqt_graph
 > ros2 run tf2_tools view_frames.py
 
+## Automatically source ros2 workspace in Windows
+#### 1. Create a folder "WindowsPowerShell" in documents folder
+#### 2. Create a file "Microsoft.PowerShell_profile.ps1" and paste the following code
+> $env:CMAKE_PREFIX_PATH="C:\opt\ros\foxy\x64;$env:CMAKE_PREFIX_PATH"
+> $env:PATH="C:\opt\ros\foxy\x64\bin;$env:PATH"
+> C:\opt\ros\foxy\x64\local_setup.ps1

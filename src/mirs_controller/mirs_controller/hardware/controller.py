@@ -27,7 +27,8 @@ class Controller:
         self.controller_running = False
 
     def is_goal_reached(self):
-        th = self.robot.get_joint_values()
+        # th = self.robot.get_joint_values()
+        th = self.robot.get_state()
         th_e = self.goal[0]-th[0]
         th_d_e = self.goal[1]-th[1]
 
@@ -68,17 +69,17 @@ class Controller:
                 theta=theta, theta_d=theta_d, theta_dd=f_dash)
             self.robot.step(F, self.time_stamp)
             trajectory.update_cur_goal()
-        return True
+        return {"messsage":"Trajectory executed sucessfully!","status":True}
     
-    def sim_execute(self, trajectory):
-        self.controller_running = True
-        # Control trajectory using PID & Control law partitioning
-        for _ in range(trajectory.n_steps):
-            self.goal[:] = trajectory.get_cur_goal()
-            self.time_stamp = self.goal[0]
+    # def sim_execute(self, trajectory):
+    #     self.controller_running = True
+    #     # Control trajectory using PID & Control law partitioning
+    #     for _ in range(trajectory.n_steps):
+    #         self.goal[:] = trajectory.get_cur_goal()
+    #         self.time_stamp = self.goal[0]
 
-            self.theta_ref[:, :] = self.goal[1]
-            self.theta_d_ref[:, :] = self.goal[2]
-            self.theta_dd_ref[:, :] = self.goal[3]
-            self.robot.move_joint(self.goal[1])
-            trajectory.update_cur_goal()
+    #         self.theta_ref[:, :] = self.goal[1]
+    #         self.theta_d_ref[:, :] = self.goal[2]
+    #         self.theta_dd_ref[:, :] = self.goal[3]
+    #         self.robot.move_joint(self.goal[1])
+    #         trajectory.update_cur_goal()

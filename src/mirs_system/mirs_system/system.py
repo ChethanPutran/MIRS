@@ -11,6 +11,9 @@ class Command:
         self.id = str(uuid.uuid1())
         self.command = cmd
 
+class Agent:
+    pass
+
 class System(Node):
     def __init__(self):
         super().__init__("System")

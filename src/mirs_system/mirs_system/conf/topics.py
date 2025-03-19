@@ -16,6 +16,7 @@ class TOPICS:
 
     #Task
     TOPIC_TASK = 'topic_task'
+    TOPIC_TASK_STATUS = 'topic_task_status'
 
     # Task Extractor
     TOPIC_EXTRACTOR_STATUS = "topic_task_extractor_status"

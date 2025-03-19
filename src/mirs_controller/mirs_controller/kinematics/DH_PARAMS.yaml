@@ -1,0 +1,30 @@
+link1_1:
+  a: -0.0
+  alpha: 0.0
+  d: -0.118809
+  theta: 0.0
+link2_1:
+  a: 0.0
+  alpha: 0.054
+  d: -0.22
+  theta: 0.0
+link3_1:
+  a: -0.0
+  alpha: 0.036
+  d: -0.42
+  theta: 0.0
+link4_1:
+  a: 0.0
+  alpha: -0.01749
+  d: -0.506
+  theta: 0.0
+link5_1:
+  a: 0.0195
+  alpha: -0.01749
+  d: -0.56275
+  theta: 0.0
+pam_1:
+  a: 0.0
+  alpha: -0.00749
+  d: -0.611
+  theta: 0.0

@@ -75,6 +75,7 @@ class RobotModel:
             self.joint_limits = [(0, 360), (-45, 225), (-45, 225)]
             # DH parameters
             # nx4 matrix of DH parameters
+            # a_i(Link length), alpha_i(Joint twist),d_i(Link offset), theta_i (Joint angle)
             self.DH_PARAMS = [[0, math.pi/2, l0, 0],
                             [l1, 0, 0, 0],
                             [l2, 0, 0, 0]]
@@ -123,17 +124,18 @@ class RobotModel:
 class URDFConverter:
     def __init__(self,urdf_file_path=None,TEST_MODEL=False):
         self.TEST_MODEL = TEST_MODEL
-        if(urdf_file_path):
-            urdf = URDF()
-            self.robot = urdf.from_xml_file(urdf_file_path)
+        if(TEST_MODEL):
+            urdf_file_path = r"C:\Chethan\Technologies\Robotics\Major_Project\mirs\src\mirs_description\urdf\robot.xacro"
+        urdf = URDF()
+        self.robot = urdf.from_xml_file(urdf_file_path)
 
     def get_robot_model(self):
         robot_model = RobotModel()
 
-        if not self.TEST_MODEL:
-            self.extract_dh_parameters(robot_model)
-            robot_model.n=self.n
-            self.extract_inertia_matrix()
+        self.extract_dh_parameters(robot_model)
+        robot_model.n=self.n
+        self.extract_inertia_matrix()
+                  
         return robot_model
 
     """
@@ -173,8 +175,9 @@ class URDFConverter:
     Returns:
         dh_parameters: List of DH parameters [a, alpha, d, theta] for each joint
     """
-    def extract_dh_parameters(self,robot_model=None):
+    def extract_dh_parameters(self,robot_model=None,return_link_names=False):
         dh_parameters = []
+        link_names = []
 
         self.n = 0
         for joint in self.robot.joints:
@@ -186,12 +189,16 @@ class URDFConverter:
                 link = joint.child
 
                 dh = [0.0, 0.0, 0.0, 0.0]
-
+                # a_i(Link length), alpha_i(Joint twist),d_i(Link offset), theta_i (Joint angle)
+    
                 for link_elem in self.robot.links:
                     if link_elem.name == link:
                         dh[0] = link_elem.visual.origin.xyz[0]
                         dh[1] = link_elem.visual.origin.xyz[1]
                         dh[2] = link_elem.visual.origin.xyz[2]
+
+                        if return_link_names:
+                            link_names.append(link)
 
                 dh[3] = origin.rpy[2]
                 
@@ -200,5 +207,22 @@ class URDFConverter:
         if robot_model:
             robot_model.n = self.n
             robot_model.set_DH_params(dh_parameters)
-        else:
-            return dh_parameters
+            return None
+        
+        if return_link_names:
+            return dh_parameters,link_names
+        
+        return dh_parameters
+
+
+if __name__ == "__main__":
+    uc = URDFConverter(TEST_MODEL=True)
+    dh_params,link_names = uc.extract_dh_parameters(return_link_names=True)
+
+    with open("DH_PARAMS.yaml",'w') as f:
+        for l_name,dh_param in zip(link_names,dh_params):
+            f.write(l_name+":\n")
+            f.write("  a: "+str(dh_param[0])+"\n")
+            f.write("  alpha: "+str(dh_param[1])+"\n")
+            f.write("  d: "+str(dh_param[2])+"\n")
+            f.write("  theta: "+str(dh_param[3])+"\n")

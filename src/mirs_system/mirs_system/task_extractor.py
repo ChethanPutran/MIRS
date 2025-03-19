@@ -22,6 +22,11 @@ class TaskExtractor(Node):
         self.recording = []
         self.task_extractor = Extractor()
 
+
+
+
+          
+
         self.create_subscription(
             SystemState, TOPICS.TOPIC_SYSTEM_STATE, self.sys_state_callback, 1)
 

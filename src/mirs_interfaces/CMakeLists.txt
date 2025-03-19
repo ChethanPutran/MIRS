@@ -13,8 +13,8 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/RobotState.msg"
-  "msg/Task.msg"
   "msg/SystemState.msg"
+  "msg/Task.msg"
   "msg/TaskExecutorState.msg"
   "msg/TaskExtractorState.msg"
   "msg/TaskRecorderState.msg"

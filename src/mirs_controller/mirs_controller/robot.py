@@ -4,8 +4,9 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import ParameterValue
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Quaternion,Pose,Twist
 from sensor_msgs.msg import JointState
+from std_msgs.msg import String
 # from tf2_ros import TransformBroadcaster, TransformStamped
 
 # from mirs_interfaces.devices.camera_client import CameraClient
@@ -77,21 +78,20 @@ class Robot(Node):
     
     
     def __init__(self):
-        super().__init__("MIRS_ROBOT")
+        super().__init__("mirs_robot")
 
         # Robot parameters (supplied from launch files/CLI)
-        # self.declare_parameter('robot_description', rclpy.Parameter.Type.STRING) 
-        # # self.declare_parameter('debug_mode', rclpy.Parameter.Type.BOOL,ParameterValue(False).bool_value) 
-        # self.declare_parameter('delta_t', 0.1) 
-        # self.declare_parameter('precision',4) 
-        # self.declare_parameter('simp_sim', rclpy.Parameter.Type.BOOL) 
+        self.declare_parameter('robot_description', r"C:\Chethan\Technologies\Robotics\Major_Project\mirs\src\mirs_description\urdf\robot.xacro") 
+        self.declare_parameter('debug_mode', False) 
+        self.declare_parameter('delta_t', 1) 
+        self.declare_parameter('precision',4) 
+        self.declare_parameter('simp_sim',False) 
 
-        # self.delta_t = self.get_parameter('delta_t').value
-        # # self.simp_sim = self.get_parameter('simp_sim')
-        # self.model_file_name = self.get_parameter('robot_description').value
-        # # self.debug = self.get_parameter('debug_mode')
-        # self.precision = self.get_parameter('precision').value
-        self.TIME_STEP =1
+        self.delta_t = self.get_parameter('delta_t').value
+        self.simp_sim = self.get_parameter('simp_sim')
+        self.model_file_name = self.get_parameter('robot_description').value
+        self.debug = self.get_parameter('debug_mode')
+        self.precision = self.get_parameter('precision').value
 
         # Robot model specs
         self.robot_model = URDFConverter(TEST_MODEL=True).get_robot_model()
@@ -100,7 +100,7 @@ class Robot(Node):
         self.n = 6
         # self.console  = Console(self.n)
         # self.console.loop()
-        # self.console.set_robot_params(self.robot_model)
+        #self.console.set_robot_params(self.robot_model)
 
 
         # Robot state variables
@@ -114,19 +114,22 @@ class Robot(Node):
         self.F_ee = np.zeros((3, 1))
 
         # Robot Software Components
-        # self.controller = Controller(self)
-        # self.transform = Transform(self.robot_model)
-        # self.kinematics = Kinematics(self.transform, self.precision)
-        # self.dynamics = Dynamics(self.transform, self.precision)
-        # self.trajec_gen = TrajectoryGenerator(self.kinematics,
-        #                                          self.dynamics,
-        #                                          self.delta_t,
-        #                                          precision=self.precision,
-        #                                          trajectory_type=Trajectory.TRAJECTORY_CUBIC)
+        self.controller = Controller(self)
+        self.transform = Transform(self.robot_model)
+        self.kinematics = Kinematics(self.transform, self.precision)
+        self.dynamics = Dynamics(self.transform, self.precision)
+        self.trajec_gen = TrajectoryGenerator(self.kinematics,
+                                                 self.dynamics,
+                                                 self.delta_t,
+                                                 precision=self.precision,
+                                                 trajectory_type=Trajectory.TRAJECTORY_CUBIC)
         
         # Node specific variable
         self.joint_state_publisher = self.create_publisher(JointState,TOPICS.TOPIC_JOINT_STATE,1)
-        self.timer = self.create_timer(self.TIME_STEP,self.publish_state)
+        self.task_status_publisher = self.create_publisher(String,TOPICS.TOPIC_TASK_STATUS,1)
+        self.timer = self.create_timer(self.delta_t,self.publish_state)
+        # self.task_subcriber = self.create_subscription(Task,TOPICS.TOPIC_TASK,self.new_task_callback,1)
+        self.goal_subcriber = self.create_subscription(Pose,"/goal",self.new_task_callback,1)
         # self.task_subcriber = self.create_subscription(Task,TOPICS.TOPIC_TASK,self.new_task_callback,1)
 
         # Simulation specific
@@ -152,7 +155,7 @@ class Robot(Node):
         #     "velocity": [0,0,0],
         #     "pose": [0,0,0]
         # }
-        # self.TIME_STEP = time_step  # in s
+        # self.delta_t = delta_t  # in s
         # self.SLEEP_TIME = 0.1  # in s
         # self.time = time.time()
 
@@ -194,19 +197,125 @@ class Robot(Node):
         #         res.error = error
         # self.robot_state_publisher.publish(res)
 
+    def get_joint_values(self):
+        return self.theta, self.theta_d
+    
+    def new_task_callback(self,msg:Pose):
+        self.get_logger().info("New task obtained.")
+        print(msg)
+
+        status = self.move_to_goal(self.get_pose_vector(msg),30)
+
+        msg = String()
+        msg.data = status["message"]
+        
+        self.task_status_publisher.publish(msg)
+
+
+    def get_pose_vector(self,msg:Pose):
+        return np.array(
+                        [[msg.position.x],
+                        [msg.position.y],
+                        [msg.position.z],
+                        [msg.orientation.x],
+                        [msg.orientation.y],
+                        [msg.orientation.z],
+                        [msg.orientation.w]
+                        ])
+
+
+    def move_to_goal(self, goal_pose, T):
+        start_pose = self.transform.get_current_pose()
+        status, trajectory = self.trajec_gen.generate_trajectory(Qi=start_pose,Qf=goal_pose,
+                                                                Ti=0, Tf=T,
+                                                                Qdi=0.1*np.ones((self.n, 1)), Qdf=0.2*np.ones((self.n, 1)),
+                                                                Qdd=0.3*np.ones((self.n, 1)))
+
+        if (not status["status"]):
+            return status
+
+        #self.on_new_trajectory_callback(trajectory)
+        # self.trajec_plotter.plot_trajectory(trajectory)
+        trajectory.init_goal()
+
+        if self.simp_sim:
+            self.on_simp_sim_callback(trajectory, self.move_joint)
+        else:
+            return self.controller.execute(trajectory)
+        
+
+    def step(self, u, time_stamp=None, add_noise=False):
+        self.u = u
+        self.time_stamp = time_stamp
+        self.theta_dd[:, :] = self.dynamics.inverse(
+            u, self.theta, self.theta_d)
+
+        theta_d = self.theta_d + self.theta_dd * self.delta_t
+        theta = self.theta + self.theta_d * \
+            self.delta_t + self.theta_dd * self.delta_t**2
+
+        if add_noise:
+            theta = self.add_noise(theta)
+            theta_d = self.add_noise(theta_d)
+
+        if self.debug:
+            print(f"T : {u}")
+            print(f"theta :{theta}")
+            print(f"theta_d :{theta_d}")
+            print(f"theta_dd :{self.theta_dd}")
+
+        self.move_joint(theta, theta_d, self.theta_dd)
+
+
+    def add_noise(self, th, noise_mean=0, noise_var=np.pi/180):
+        return np.round(th + np.random.normal(noise_mean, noise_var, size=(self.n, 1)), self.precision)
+    
+
+    def move_joint(self, theta, theta_d=np.ones((3, 1)), theta_dd=np.ones((3, 1))):
+        if self.debug:
+            print("Moving Theta : ", theta, "\n\n")
+
+        self.set_state(theta,theta_d,theta_dd)
+
+        self.transform.update(theta)
+        #self.update_link_pos()
+
+        # Handled by the joint state topic publisher 
+        # if (self.controller.controller_running):
+        #     self.on_joint_move_callback(self.time_stamp,
+        #                                 [self.controller.theta_ref,
+        #                                  self.theta],
+        #                                 [self.controller.theta_d_ref,
+        #                                  self.theta_d],
+        #                                 self.u)
+        # else:
+        #     self.on_joint_move_callback(self.time_stamp)
+
+
+    def set_state(self,theta,theta_d,theta_dd):
+        self.theta[:, :] = theta
+        self.theta_d[:, :] = theta_d
+        self.theta_dd[:, :] = theta_dd
+    
+
     """ Get feedback from hardware and publish robot state / pose """
     def publish_state(self):
         self.get_logger().info("Updating robot state...")
         msg = JointState()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.name = self.robot_model.joint_names[:]
-        msg.position = self.theta.flatten().tolist()
-        msg.velocity = self.theta_d.flatten().tolist()
-        msg.effort = self.Tau.flatten().tolist()
+        msg.header.stamp,msg.name,msg.position,msg.velocity,msg.effort = self.get_state()
 
         self.joint_state_publisher.publish(msg)
         self.theta += 0.1
+
+    def get_state(self):
+        stamp = self.get_clock().now().to_msg()
+        name = self.robot_model.joint_names[:]
+        position = self.theta.flatten().tolist()
+        velocity = self.theta_d.flatten().tolist()
+        effort = self.Tau.flatten().tolist()
+        return stamp,name,position,velocity,effort
     
+   
     # def perform(self,task):
     #     start_point = task.start_position
     #     end_point = task.end_position
@@ -248,15 +357,7 @@ class Robot(Node):
     # def get_time(self):
     #     return self.time
 
-    # def get_state(self):
-    #     return self.STATE
     
-    # def set_state(self,msg):
-    #     print(msg)
-    #     # Hardware.set_state()
-    #     # self.STATE['Pose'] = self.matrices.get_ee_pose()
-    #     # self.STATE['Position'] = self.kinematics.forward(self.theta)
-    #     # self.STATE['Velocity'] = self.kinematics.compute_ee_velocity(self.theta_dot)
 
     # def on_exit(self, callback):
     #     self.on_exit_callback = callback
@@ -285,53 +386,7 @@ class Robot(Node):
     #     self.on_exit_callback()
     #     exit(0)
 
-    # def move_to_goal(self, goal_point, T, simple_sim=False):
-    #     start_orientation, start_point = self.transform.get_current_pose()
-
-    #     ons = np.ones((self.n, 1))
-
-    #     status, trajectory = self.trajec_gen.generate_trajectory(
-    #         start_point, goal_point, 0, T, 0.1*ons, 0.2*ons, 0.3*ons)
-
-    #     if (not status):
-    #         # print(trajectory)
-    #         return
-
-    #     self.on_new_trajectory_callback(trajectory)
-
-    #     # self.trajec_plotter.plot_trajectory(trajectory)
-    #     trajectory.init_goal()
-
-    #     if self.simp_sim:
-    #         self.on_simp_sim_callback(trajectory, self.move_joint)
-    #     else:
-    #         return self.controller.execute(trajectory)
-
-    # def add_noise(self, th, noise_mean=0, noise_var=np.pi/180):
-    #     return np.round(th + np.random.normal(noise_mean, noise_var, size=(self.n, 1)), self.precision)
-
-    # def step(self, u, time_stamp=None, add_noise=False):
-    #     self.u = u
-    #     self.time_stamp = time_stamp
-    #     self.theta_dd[:, :] = self.dynamics.inverse(
-    #         u, self.theta, self.theta_d)
-
-    #     theta_d = self.theta_d + self.theta_dd * self.delta_t
-    #     theta = self.theta + self.theta_d * \
-    #         self.delta_t + self.theta_dd * self.delta_t**2
-
-    #     if add_noise:
-    #         theta = self.add_noise(theta)
-    #         theta_d = self.add_noise(theta_d)
-
-    #     if self.debug:
-    #         print(f"T : {u}")
-    #         print(f"theta :{theta}")
-    #         print(f"theta_d :{theta_d}")
-    #         print(f"theta_dd :{self.theta_dd}")
-
-    #     self.move_joint(theta, theta_d, self.theta_dd)
-
+   
     # def execute_program(self, file_name="program.txt"):
     #     actions = ["PICK", "PLACE"]
     #     movements = ["MOVE_DOWN", "MOVE_UP", "MOVE_LEFT",
@@ -380,35 +435,14 @@ class Robot(Node):
     #                 break
     #         time.sleep(0.1)
 
-    # def move_joint(self, theta, theta_d=np.ones((3, 1)), theta_dd=np.ones((3, 1))):
-    #     if self.debug:
-    #         print("Moving Theta : ", theta, "\n\n")
-
-    #     self.theta[:, :] = theta
-    #     self.theta_d[:, :] = theta_d
-    #     self.theta_dd[:, :] = theta_dd
-
-    #     self.transform.update(theta)
-    #     self.update_link_pos()
-
-    #     # Handled by the joint state topic publisher 
-    #     # if (self.controller.controller_running):
-    #     #     self.on_joint_move_callback(self.time_stamp,
-    #     #                                 [self.controller.theta_ref,
-    #     #                                  self.theta],
-    #     #                                 [self.controller.theta_d_ref,
-    #     #                                  self.theta_d],
-    #     #                                 self.u)
-    #     # else:
-    #     #     self.on_joint_move_callback(self.time_stamp)
+    
 
     # def update_link_pos(self):
     #     for i in range(0, self.n):
     #         self.links[i] = np.dot(self.transform._0T(i), np.dot(self.transform.Rot(
     #             self.theta[i, 0]), self.links_in_frame[i].T))
 
-    # def get_joint_values(self):
-    #     return self.theta, self.theta_d
+    
 
     # def get_ee_static_forces(self):
     #     return self.F_ee, self.Tau_ee

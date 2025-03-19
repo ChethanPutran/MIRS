@@ -1,18 +1,36 @@
 {
     "ros.distro": "foxy",
     "python.analysis.extraPaths": [
-        "C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages"
+        "C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages",
+        "./install/mirs_system/Lib/site-packages"
     ],
     "python.autoComplete.extraPaths": [
         "C:\\opt\\ros\\foxy\\x64\\Lib\\site-packages",
-        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_system\\Lib\\site-packages",
-        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_interfaces\\lib\\site-packages",
-        "C:\\Chethan\\Mechanical\\projects\\Major_Project\\software\\MIRS\\mirs\\install\\mirs_interfaces\\lib\\mirs_interfaces",
+        "C:\\Chethan\\Technologies\\Robotics\\Major_Project\\mirs\\install\\mirs_system\\Lib\\mirs_system",
+        "C:\\Chethan\\Technologies\\Robotics\\Major_Project\\mirs\\install\\mirs_controller\\Lib\\mirs_controller",
+        "C:\\Chethan\\Technologies\\Robotics\\Major_Project\\mirs\\install\\mirs_interfaces\\lib\\mirs_interfaces",
+        "C:\\Chethan\\Technologies\\Robotics\\Major_Project\\mirs\\install\\mirs_system\\Lib\\site-packages",
+        "C:\\Chethan\\Technologies\\Robotics\\Major_Project\\mirs\\install\\mirs_controller\\Lib\\site-packages",
+        "C:\\Chethan\\Technologies\\Robotics\\Major_Project\\mirs\\install\\mirs_interfaces\\lib\\site-packages",
     ],
     "[python]": {
         "editor.defaultFormatter": "ms-python.autopep8"
     },
     "python.formatting.provider": "none",
-    "cmake.sourceDirectory": "C:/Chethan/Mechanical/projects/Major_Project/software/MIRS/mirs/src/mirs_description"
+    // "cmake.sourceDirectory": "C:/Chethan/Mechanical/projects/Major_Project/software/MIRS/mirs/src/mirs_description"
+    "cmake.sourceDirectory": "C:/Chethan/Technologies/Robotics/Major_Project/mirs/src/mirs_description",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+   "PowerShell": {
+      "path": [
+         "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      ],
+      "args": [
+         "-NoExit",
+         "-Command",
+         "& 'C:\\opt\\ros\\foxy\\x64\\local_setup.ps1'"
+      ]
+   }
+},
 
 }

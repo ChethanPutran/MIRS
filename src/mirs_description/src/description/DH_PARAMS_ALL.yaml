@@ -1,0 +1,75 @@
+link1_1:
+  a: -0.0
+  alpha: 0.0
+  d: -0.118809
+  theta: 0.0
+link2_1:
+  a: 0.0
+  alpha: 0.054
+  d: -0.22
+  theta: 0.0
+link3_1:
+  a: -0.0
+  alpha: 0.036
+  d: -0.42
+  theta: 0.0
+link4_1:
+  a: 0.0
+  alpha: -0.01749
+  d: -0.506
+  theta: 0.0
+link5_1:
+  a: 0.0195
+  alpha: -0.01749
+  d: -0.56275
+  theta: 0.0
+pam_1:
+  a: 0.0
+  alpha: -0.00749
+  d: -0.611
+  theta: 0.0
+fl_link2_1:
+  a: 0.063169
+  alpha: 0.00475
+  d: -0.693878
+  theta: 0.0
+fr_link1_1:
+  a: 0.055641
+  alpha: 1e-05
+  d: -0.667525
+  theta: 0.0
+fl_link1_1:
+  a: 0.062227
+  alpha: -0.03499
+  d: -0.666093
+  theta: 0.0
+ft_link2_1:
+  a: 0.072494
+  alpha: -0.032298
+  d: -0.691462
+  theta: 0.0
+fr_link0_1:
+  a: 0.056599
+  alpha: -0.03499
+  d: -0.652189
+  theta: 0.0
+fl_link0_1:
+  a: 0.056599
+  alpha: 1e-05
+  d: -0.652189
+  theta: 0.0
+ft_link0_1:
+  a: 0.005745
+  alpha: -0.01749
+  d: -0.628598
+  theta: 0.0
+ft_link1_1:
+  a: -0.017743
+  alpha: -0.01749
+  d: -0.64048
+  theta: 0.0
+fr_link2_1:
+  a: -0.035686
+  alpha: -0.017425
+  d: -0.653209
+  theta: 0.0

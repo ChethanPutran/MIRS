@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from ..kinematics.kinematics import Kinematics
+from ..dynamics.dynamics import Dynamics
 np.set_printoptions(precision=4)
 
 
@@ -11,10 +13,10 @@ class Trajectory:
     TRAJECTORY_QUINTIC = 'quintic'
     N_BLEND_STEPS = 10
     N_MIDDLE_STEPS = 50
-    delta_t = 0.001
+    DELTA_T = 0.001
     COLORS = ['red', 'orange', 'crimson', 'magenta', 'blue', 'limegreen']
 
-    def __init__(self, kinematic_model, dynamic_model, dt=delta_t, trajectory_method=JOINT_SPACE, trajectory_type=TRAJECTORY_CUBIC, precision=4):
+    def __init__(self, kinematic_model:Kinematics, dynamic_model:Dynamics, dt=DELTA_T, trajectory_method=JOINT_SPACE, trajectory_type=TRAJECTORY_CUBIC, precision=4):
         self.delta_t = dt
         self.precision = precision
         self.round_decimals = len(str(self.delta_t).split(".")[-1])
@@ -87,7 +89,7 @@ class Trajectory:
 
 
 class TrajectoryGenerator(Trajectory):
-    def __init__(self, kinematic_model, dynamic_model, delta_t=Trajectory.delta_t, trajectory_type=Trajectory.TRAJECTORY_CUBIC, joint_space=True, precision=4):
+    def __init__(self, kinematic_model, dynamic_model, delta_t=Trajectory.DELTA_T, trajectory_type=Trajectory.TRAJECTORY_CUBIC, joint_space=True, precision=4):
         super().__init__(kinematic_model,
                          dynamic_model,
                          delta_t,
@@ -174,46 +176,52 @@ class TrajectoryGenerator(Trajectory):
 
         return self.trajectory()
 
-    def generate_trajectory(self, intit_pt, final_pt, t_i, t_f, v_i=[], v_f=[], const_acceleration=5):
-        self.n_steps = int((t_f-t_i)/self.delta_t)
+    def generate_trajectory(self, Qi, Qf, Ti, Tf, Qdi=[], Qdf=[], Qdd=5):
+        self.n_steps = int((Ti-Tf)/self.delta_t)
 
-        print("Inital point :", intit_pt)
-        print("Final point :", final_pt)
+        print("Inital Pose :", Qi)
+        print("Final Pose :", Qf)
+
         q_i = None
         q_f = None
 
         if (self.trajectory_method == Trajectory.JOINT_SPACE):
             # status_i, theta_i = self.kinematics.inverse(intit_pt)
-            theta_i = self.kinematics.transform.get_current_joint_state()
-            status_f, theta_f = self.kinematics.inverse(final_pt)
+            theta_i = self.kinematics.get_current_joint_state()
+            is_possible, theta_f = self.kinematics.inverse(Qf)
 
             print("Inital theta :", np.rad2deg(theta_i))
             print("Final theta :", np.rad2deg(theta_f))
 
-            if (not status_f):
-                return False, "Goal is not reachable!"
+            if (not is_possible):
+                return {"message":"Goal is not reachable!",
+                "status":False}, None
 
             q_i = theta_i
-            q_dot_i = self.kinematics.get_joint_velocity(v_i)
-            q_dot_f = self.kinematics.get_joint_velocity(v_f)
+            q_f = theta_f
+            q_dot_i = self.kinematics.get_joint_velocity(Qdi)
+            q_dot_f = self.kinematics.get_joint_velocity(Qdf)
 
-            for i in range(theta_f.shape[1]):
-                q_f = theta_f[:, [i]]
-                trajectory = self.generate(
-                    t_f, q_i, q_f, q_dot_i, q_dot_f, const_acceleration)
-
-                for i in range(trajectory.n_steps):
-                    status = self.is_point_accessible(trajectory.q[:, [i]])
-
-                    if (not status):
-                        return False, "Trajectory can not be generated in this scheme!"
-
-            return trajectory
         else:
-            q_i = intit_pt
-            q_f = final_pt
-            q_dot_i = v_i
-            q_dot_f = v_f
+            q_i = Qi
+            q_f = Qf
+            q_dot_i = Qi
+            q_dot_f = Qf
+        
+    
+        trajectory = self.generate(
+                (Tf-Ti), q_i, q_f, q_dot_i, q_dot_f, Qdd)
 
-            trajectory = self.generate(
-                t_f, q_i, q_f, q_dot_i, q_dot_f, const_acceleration)
+        # for i in range(theta_f.shape[1]):
+        #     q_f = theta_f[:, [i]]
+        #     trajectory = self.generate(
+        #         (Tf-Ti), q_i, q_f, q_dot_i, q_dot_f, Qdd)
+
+        #     for i in range(trajectory.n_steps):
+        #         status = self.is_point_accessible(trajectory.q[:, [i]])
+
+        #         if (not status):
+        #             return False, "Trajectory can not be generated in this scheme!"
+
+        return {"message":"Trajectory has been generated sucessfully!",
+                "status":True}, trajectory
