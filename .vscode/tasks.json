@@ -1,11 +1,11 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Source ROS 2",
-			"type": "shell",
-			"command": "call C:\\opt\\ros\\foxy\\x64\\local_setup.bat",
-			"problemMatcher": []
-		}
-	]
+	// "version": "2.0.0",
+	// "tasks": [
+	// 	{
+	// 		"label": "Source ROS 2",
+	// 		"type": "shell",
+	// 		"command": "call C:\\opt\\ros\\foxy\\x64\\local_setup.bat",
+	// 		"problemMatcher": []
+	// 	}
+	// ]
 }

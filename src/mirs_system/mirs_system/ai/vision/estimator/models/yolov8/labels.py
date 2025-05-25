@@ -1,1 +1,0 @@
-LABELS = ["cylinder","cube","sphere"]

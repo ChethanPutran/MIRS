@@ -48,7 +48,6 @@ class System(Node):
         self.timer = self.create_timer(
             self.publishing_period, self.publish_system_state)
 
-
     def recorder_callback(self, msg:TaskRecorderState):
         if msg.command_id:
             self.get_logger().info("CMD id :"+msg.command_id)
@@ -191,13 +190,11 @@ class System(Node):
 
         self.clear_data()
 
-
     def clear_data(self):
         if self.state['status'] == States.ERROR:
             self.state['status'] = States.ACTIVE
         self.state['message'] = ''
         self.state['error'] = ''
-
 
     def set_state(self, status='', recording=[], error='', message='', tasks=[]):
         if not status:

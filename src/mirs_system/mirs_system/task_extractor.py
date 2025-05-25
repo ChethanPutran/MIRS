@@ -4,7 +4,7 @@ from .conf.topics import TOPICS
 from .conf.states import States
 from .conf.commands import COMMANDS
 from mirs_interfaces.msg import TaskExtractorState, SystemState,Tasks,Task
-from .ai.extractor import Extractor
+from ai.extractor import Extractor
 
 
 class TaskExtractor(Node):

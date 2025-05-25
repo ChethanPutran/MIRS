@@ -1,16 +1,16 @@
 {
-  "configurations": [
-    {
-      "browse": {
-        "databaseFilename": "${default}",
-        "limitSymbolsToIncludedHeaders": false
-      },
-      "includePath": [
-        "C:\\opt\\ros\\foxy\\x64\\include\\**"
-      ],
-      "name": "ROS"
-    }
-  ],
-  "version": 4
-  
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "${default}",
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "includePath": [
+                "C:\\opt\\ros\\foxy\\x64\\include\\**"
+            ],
+            "name": "ROS",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
 }

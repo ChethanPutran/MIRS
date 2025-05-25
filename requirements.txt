@@ -12,3 +12,6 @@ tensorflow==2.10.1
 ultralytics==8.0.104
 urdf-parser-py==0.0.4
 sympy==1.11.1
+SpeechRecognition==3.10.0
+PyAudio==0.2.13
+pyserial==3.5

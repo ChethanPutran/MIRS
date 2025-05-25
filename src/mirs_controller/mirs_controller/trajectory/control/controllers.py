@@ -1,7 +1,45 @@
 import numpy as np
 import time 
-from mirs_controller.dynamics.dynamics import Dynamics
-from mirs_interfaces.hardware.hardware import Hardware
+
+from simulation import Trajectory,Robot
+class PID:
+    def __init__(self,Kp,Ki,Kd):
+        self.Kd = Kd
+        self.Ki = Ki
+        self.Kp = Kp
+
+
+class MPC:
+    def __init__(self,model,N=5):
+        self.J = 0
+        self.model = model
+        self.N = N
+        self.Q = np.diag(np.random.random(N))
+        self.R = np.diag(np.random.random(N))
+
+    def minimize(self,X,Xr,U_initial,U_constraints,max_iters=100,learning_rate=0.05):
+        U = U_initial
+        for i in range(max_iters):
+            for _ in range(max_iters):
+                J,grad_X,grad_U = self.cost_func(Xr,X,U)
+                U -= learning_rate * grad_U  # Gradient descent step
+                U = np.clip(U, U_constraints[0], U_constraints[1])  # Apply control constraints
+        # Get first control input
+        return U[:, 0]
+
+    def cost_func(self,Xr,X,U):
+        error = (X-Xr)
+        J = np.trace(error.T @ self.Q @ error) + np.trace(U.T @ self.R @ U)
+        grad_X = 2 * self.Q @ error
+        grad_U = 2 * self.R @ U
+        print("Cost : ",J)
+        return J,grad_X,grad_U
+
+    def get_control_input(self,X,Xr):
+        U = np.zeros((1,1))  # Initial guess
+        Kgcm_to_Nm = 9.81/100
+        U_optim = self.minimize(X,Xr,U,[0,10*Kgcm_to_Nm])
+        print(U_optim)
 
 class ArmJointController:
     def __init__(self,joints,Kp,Kd,Ki,tolerance=0.01):

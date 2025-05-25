@@ -1,4 +1,0 @@
-Densefusion
-Efficient pose
-PoseCNN
-LineMOD

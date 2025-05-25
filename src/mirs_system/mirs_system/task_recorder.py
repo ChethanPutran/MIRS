@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from mirs_system.conf.topics import TOPICS
 from mirs_interfaces.msg import TaskRecorderState, SystemState
-from mirs_system.ai.vision.camera import camera_client
+from ai.vision.camera import camera_client
 from .conf.states import States
 from .conf.commands import COMMANDS
 import time

@@ -3,6 +3,8 @@ build/
 build
 log/
 logs
+doc
+doc/
 install/
 install
 virtual/

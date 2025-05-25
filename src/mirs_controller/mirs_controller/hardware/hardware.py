@@ -245,6 +245,11 @@ class Hardware:
     def exit(self):
         self.board.exit()
 
+class IMU:
+    def __init__(self):
+        pass
+    def get_data(self):
+        pass
 
 def main():
     import tkinter as tk

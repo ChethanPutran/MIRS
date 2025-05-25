@@ -18,19 +18,19 @@
     },
     "python.formatting.provider": "none",
     // "cmake.sourceDirectory": "C:/Chethan/Mechanical/projects/Major_Project/software/MIRS/mirs/src/mirs_description"
-    "cmake.sourceDirectory": "C:/Chethan/Technologies/Robotics/Major_Project/mirs/src/mirs_description",
+    "cmake.sourceDirectory": "/mnt/c/Chethan/Technologies/Robotics/Major_Project/mirs/src/mirs_description",
     "terminal.integrated.defaultProfile.windows": "PowerShell",
     "terminal.integrated.profiles.windows": {
-   "PowerShell": {
-      "path": [
-         "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-      ],
-      "args": [
-         "-NoExit",
-         "-Command",
-         "& 'C:\\opt\\ros\\foxy\\x64\\local_setup.ps1'"
-      ]
-   }
+//    "PowerShell": {
+//       "path": [
+//          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+//       ],
+//       "args": [
+//          "-NoExit",
+//          "-Command",
+//          "& 'C:\\opt\\ros\\foxy\\x64\\local_setup.ps1'"
+//       ]
+//    }
 },
 
 }

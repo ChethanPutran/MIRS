@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from .conf.topics import TOPICS
 from mirs_interfaces.msg import TaskExecutorState, Task,RobotState, SystemState
-from mirs_system.ai.task.task import Task
+from ai.task.task import Task
 from mirs_system.conf.commands import COMMANDS
 import time
 
@@ -34,7 +34,42 @@ class TaskExecutor(Node):
         self.robot_state_subscriber = self.create_subscription(RobotState, TOPICS.TOPIC_ROBOT_STATE, self.set_task_execution_status,1)
 
         self.set_state(ExecutorState.WAITING)
-    
+
+    def task_callback(self, msg):
+        task_list_str = msg.data
+        tasks = task_list_str.split('\n')
+        self.execute_tasks(tasks)
+
+    def execute_tasks(self, tasks):
+        for task in tasks:
+            if not task.strip():
+                continue
+            self.get_logger().info(f"Executing Task: {task}")
+            self.perform_task(task)
+
+    def perform_task(self, task):
+        task = task.lower()
+        if "move to" in task:
+            location = task.split("move to")[-1].strip()
+            self.move_to(location)
+        elif "pick" in task:
+            obj = task.split("pick")[-1].strip()
+            self.pick_object(obj)
+        elif "place" in task:
+            location = task.split("place")[-1].strip()
+            self.place_object(location)
+        else:
+            self.get_logger().warn(f"Unknown task: {task}")
+
+    def move_to(self, location):
+        self.get_logger().info(f"Simulated: Moving to {location}")
+
+    def pick_object(self, obj):
+        self.get_logger().info(f"Simulated: Picking up {obj}")
+
+    def place_object(self, location):
+        self.get_logger().info(f"Simulated: Placing object on {location}")
+
     def set_task_execution_status(self,msg):
 
         # Append finished task 
