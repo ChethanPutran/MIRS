@@ -71,16 +71,9 @@ Example:
 ros2 launch mirs_description robot.launch.py
 ```
 
-
-
 ## Learning & Skills Gained
 - Full-stack robotics: Design, Simulation, Control, AI
 - ROS 2, Gazebo, Arduino, Raspberry Pi, Python/C++ programming
 - Real-time control, sensor fusion, camera calibration, LLM integration
-
-## 🔮 Future Scope
-- Multimodal input (vision + voice + touch)
-- Reinforcement Learning for adaptive learning
-- Task generalization from human demonstration + feedback
 
 ---
