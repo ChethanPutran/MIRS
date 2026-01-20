@@ -2,7 +2,7 @@
 # AI-Powered Biomimetic Robotic Arm
 
 ## Project Overview
-A multifunctional robotic arm with a 9-DOF biomimetic hand, integrating AI, stereo vision, and natural language understanding to perform intelligent, human-like manipulation tasks.
+A multifunctional robotic arm with a biomimetic hand, integrating AI, stereo vision, and natural language understanding to perform intelligent, human-like manipulation tasks.
 
 ## Key Features
 - Human-inspired biomimetic hand design for tool manipulation
